@@ -1,0 +1,14 @@
+{
+  "name": "funglr",
+  "version": "1.0.0",
+  "description": "Bloggin app",
+  "author": "Xavier Thomas",
+  "license": "ISC",
+  "devDependencies": {
+    "gulp": "^3.8.11",
+    "gulp-concat": "^2.5.2",
+    "gulp-plumber": "^1.0.0",
+    "gulp-rename": "^1.2.2",
+    "gulp-ruby-sass": "^1.0.5"
+  }
+}
