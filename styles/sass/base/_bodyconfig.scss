@@ -1,0 +1,4 @@
+body,html{
+	@include sameWH(100%);
+	position: relative;
+}

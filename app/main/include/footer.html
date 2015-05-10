@@ -1,0 +1,23 @@
+<footer class="footer">
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-3">
+                <div class="fillBox">
+                    <small>&copy; Copyright 2058, Funglr Corporation</small>
+                </div>
+            </div>
+            <div class="col-xs-6">
+                <div class="fillBox">
+                    <ul>
+                        <li ng-repeat="footerList in footer.footerListTab">
+                            <a  ui-sref-active="active" ui-sref="{{footerList.link}}">
+                                {{footerList.name}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-xs-3"></div>
+        </div>
+    </div>
+</footer>

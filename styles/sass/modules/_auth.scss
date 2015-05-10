@@ -1,0 +1,5 @@
+#login,#signup{
+	.col-sm-6 {
+		@extend %auth;
+	}	
+}

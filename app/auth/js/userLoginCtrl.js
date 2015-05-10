@@ -1,8 +1,8 @@
 (function (window){
 	var angular = window.angular;
-	angular.module('funglr.auth');
-	// .controller('userAuth', ['AuthFactory', function(AuthFactory){
-	// 	this.user.createAccount = AuthFactory.getRef;
+	angular.module('funglr.auth')
+	.controller('userLoginCtrl', ['AuthFactory', function(AuthFactory){
+		
 
-	// }])
+	}])
 }(window));

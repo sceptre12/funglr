@@ -1,0 +1,39 @@
+footer {
+    border-top: 2px solid $footerBordercolor;
+    width: 100%;
+    height: 50px;
+    position: absolute;
+    bottom: 0;
+    .container {
+        height: 100%;
+        .row {
+            height: inherit;
+            .col-xs-3, .col-xs-6 {
+                height: inherit;
+                .fillBox {
+                    position: relative;
+                    @include sameWH(100%);
+                    @extend %flexCenter;
+                }
+            }
+            .col-xs-6 {
+                ul {
+                    list-style: none;
+                    display: inline-flex;
+                    padding-left: 0;
+                    margin-bottom: 0;
+                    li {
+                   		margin-left: 15px;
+                    	margin-right: 15px;
+                    	a{
+                    		font-size: 2vw;
+                    		&.active{
+								text-decoration: underline;
+                    		}
+                    	}
+                    }
+                }
+            }
+        }
+    }
+}
