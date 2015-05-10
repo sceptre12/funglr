@@ -1,9 +1,45 @@
 (function(window) {
     var angular = window.angular;
     angular.module('funglr.auth')
-        .factory('AuthFactory', ['FUNGLR_DB', function(FUNGLR_DB) {
-            var ref = new Firebase("https://funglr.firebaseio.com");
-            return ref;
+        .factory('AuthFactory', ['FUNGLR_DB',function(FUNGLR_DB) {
+            var ref = new Firebase(FUNGLR_DB.url);
+            var errors = {
+                  userCreation: ""
+            }
+            var success = {
+                  userCreation: ""
+            }
+            var createUser = function(usrObj) {
+                    ref.createUser({
+                        email: usrObj.email,
+                        password: usrObj.password
+                    }, function(error, userData) {
+                        if (error) {
+                            switch (error.code) {
+                                case "EMAIL_TAKEN":
+                                    console.log("EMAIL_TAKEN");
+                                    errors.userCreation = "EMAIL_TAKEN";
+                                    break;
+                                case "INVALID_EMAIL":
+                                    console.log("INVALID_EMAIL");
+                                    errors.userCreation = "INVALID_EMAIL";
+                                    break;
+                                default:
+                                    console.log(error);
+                                   errors.userCreation = error;
+                            }
+                        } else {
+                              console.log(userData);
+                            success.userCreation = userData;
+                        }
+                    });
+            };
+
+            return {
+                createUser    : createUser,
+                errors        : errors.userCreation,
+                success       : success.userCreation 
+            }
             // returns the if the user is authenticated or not
             // in the case they aren't authenticated it returns null
             // this.user = ref.getAuth();
@@ -41,11 +77,11 @@
             //             }
             //         } else {
             //             this.loginWithPw(userName, function(authData){
-            //             	saveNewUser(authData);
+            //                saveNewUser(authData);
             //             }, callback)
             //         }
             //     })
             // }.bind(this);
-            
+
         }]);
 }(window));

@@ -32,7 +32,7 @@
                 })
                 .state('funglr.signup', {
                     url: '/signup',
-                    controller: 'userSignUpCtrl as signup',
+                    controller: 'userSignUpCtrl as signUp',
                     templateUrl: 'app/auth/signup.html'
                 })
                 .state('funglr.about', {
