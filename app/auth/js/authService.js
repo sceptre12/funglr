@@ -2,7 +2,8 @@
     var angular = window.angular;
     angular.module('funglr.auth')
         .factory('AuthFactory', ['FUNGLR_DB', function(FUNGLR_DB) {
-            var ref = new Firebase(FUNGLR_DB);
+            var ref = new Firebase("https://funglr.firebaseio.com");
+            return ref;
             // returns the if the user is authenticated or not
             // in the case they aren't authenticated it returns null
             // this.user = ref.getAuth();
