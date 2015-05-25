@@ -1,17 +1,17 @@
 <div class="container anim-slide-below-fade" data-anim-speed="500" id="login">
     <div class="row">
         <div class="col-sm-offset-3 col-sm-6 ">
-            <h1>Login Here</h1>
-            <form>
-                <div class="form-group" novalidate>
+            <h1>Login Here </h1>
+            <form name="userLogin"  ng-submit="login()" novalidate>
+                <div class="form-group" >
                     <label for="email">Email address</label>
-                    <input type="email" class="form-control" id="email" placeholder="Enter email" ng-model="login.email">
+                    <input type="email" class="form-control" id="email" placeholder="Enter email" ng-model="user.email">
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" class="form-control" id="password" placeholder="Password" ng-model="login.passwd">
+                    <input type="password" class="form-control" id="password" placeholder="Password" ng-model="user.passwd">
                 </div>
-                <button type="submit" class="btn btn-default">Submit</button>
+                <button type="submit" class="btn btn-default" ng-disabled="userLogin.$invalid">Submit</button>
             </form>
         </div>
     </div>

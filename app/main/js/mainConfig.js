@@ -1,6 +1,6 @@
 (function(window) {
     var angular = window.angular;
-    angular.module('funglr', ['ui.bootstrap', 'ui.router', 'ngAnimate', 'anim-in-out','funglr.user', 'funglr.auth'])
+    angular.module('funglr', ['ui.bootstrap', 'ui.router', 'ngAnimate', 'anim-in-out','funglr.user', 'funglr.auth','firebase'])
         .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
             $urlRouterProvider.otherwise('/home');
             $stateProvider

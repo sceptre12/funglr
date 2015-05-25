@@ -2,26 +2,34 @@
     <div class="row">
         <div class="col-sm-offset-3 col-sm-6 ">
             <h1>Sign Up Here</h1>
-            <div class="formblck" ng-if="!signUp.register.actions.isSuccess()">
-                <form novalidate name="registeration" ng-submit="signUp.register.actions.createUser()">
-                    <div class="form-group" novalidate>
+            <!-- <div class="formblck" ng-if="!signUp.register.actions.isSuccess()"> -->
+                <form novalidate name="userRegistration" ng-submit="register()">
+                    <div class="form-group">
+                        <label for="fname">First Name</label>
+                        <input type="text" class="form-control" id="fname" placeholder="Enter Firstname" ng-model="user.firstname" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lname">Last Name</label>
+                        <input type="text" class="form-control" id="lname" placeholder="Enter Lastname" ng-model="user.lastname" required>
+                    </div>
+                    <div class="form-group" >
                         <label for="email">Email address</label>
-                        <input type="email" class="form-control" id="email" placeholder="Enter email" ng-model="signUp.register.form.email" min-length="5" maxlength="60" ng-model-options="{ debounce: 500 }" required>
+                        <input type="email" class="form-control" id="email" placeholder="Enter email" ng-model="user.email"  required>
                     </div>
                     <div class="form-group">
                         <label for="pass1">Password</label>
-                        <input type="password" class="form-control" id="pass1" placeholder="Password" ng-model="signUp.register.form.password" minlength="7" maxlength="20" ng-model-options="{ debounce: 500 }" required>
+                        <input type="password" class="form-control" id="pass1" placeholder="Password" ng-model="user.password"  required>
                     </div>
-                    <div class="form-group">
+                    <!-- <div class="form-group">
                         <label for="passDupl">Re-Enter Password</label>
-                        <input type="password" class="form-control" id="passDupl" placeholder="Re-Enter Password" ng-model="signUp.register.form.passDuplicate" ng-model-options="{ debounce: 500 }" required>
-                    </div>
-                    <button type="submit" class="btn btn-default" ng-click="signUp.register.actions.isSuccess()">Submit</button>
+                        <input type="password" class="form-control" id="passDupl" placeholder="Re-Enter Password" ng-model="test.password" required>
+                    </div> -->
+                    <button type="submit" class="btn btn-default" ng-disabled="userRegistration.$invalid">Submit</button>
                 </form>
-            </div>
-            <div class="success" ng-if="signUp.register.actions.isSuccess()">
+            <!-- </div> -->
+            <!-- <div class="success" ng-if="signUp.register.actions.isSuccess()">
                 <h1>Registration Successful</h1>
-            </div>
+            </div> -->
         </div>
     </div>
 </div>

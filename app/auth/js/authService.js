@@ -1,45 +1,34 @@
 (function(window) {
     var angular = window.angular;
     angular.module('funglr.auth')
-        .factory('AuthFactory', ['FUNGLR_DB',function(FUNGLR_DB) {
-            var ref = new Firebase(FUNGLR_DB.url);
-            var errors = {
-                  userCreation: ""
-            }
-            var success = {
-                  userCreation: ""
-            }
-            var createUser = function(usrObj) {
-                    ref.createUser({
-                        email: usrObj.email,
-                        password: usrObj.password
-                    }, function(error, userData) {
-                        if (error) {
-                            switch (error.code) {
-                                case "EMAIL_TAKEN":
-                                    console.log("EMAIL_TAKEN");
-                                    errors.userCreation = "EMAIL_TAKEN";
-                                    break;
-                                case "INVALID_EMAIL":
-                                    console.log("INVALID_EMAIL");
-                                    errors.userCreation = "INVALID_EMAIL";
-                                    break;
-                                default:
-                                    console.log(error);
-                                   errors.userCreation = error;
-                            }
-                        } else {
-                              console.log(userData);
-                            success.userCreation = userData;
-                        }
+        .factory('AuthFactory', ['FUNGLR_DB','$firebaseAuth',function(FUNGLR_DB,$firebaseAuth) {
+            var ref = new Firebase(FUNGLR_DB);
+            var auth = $firebaseAuth(ref);
+            var myObj ={
+                login   : function(user){
+                    return auth.$authWithPassword({
+                        email       : user.email,
+                        password    : user.password
                     });
-            };
-
-            return {
-                createUser    : createUser,
-                errors        : errors.userCreation,
-                success       : success.userCreation 
+                },
+                register: function(user){
+                    return auth.$createUser({
+                        email       : user.email,
+                        password    : user.password
+                    }).then(function(regUser){
+                        var ref = new Firebase(FUNGLR_DB+'users');
+                        var userInfo = {
+                            date        : Firebase.ServerValue.TIMESTAMP,
+                            regUser     : regUser.uid,
+                            firstname   : user.firstname,
+                            lastname    : user.lastname,
+                            email       : user.email
+                        };
+                        ref.child(regUser.uid).set(userInfo);
+                    })
+                }
             }
+            return myObj;
             // returns the if the user is authenticated or not
             // in the case they aren't authenticated it returns null
             // this.user = ref.getAuth();
