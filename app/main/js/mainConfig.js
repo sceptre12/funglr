@@ -42,7 +42,57 @@
                 .state('funglr.contact', {
                     url: '/contact',
                     templateUrl: 'app/main/views/contact.html'
+                })
+                .state('funglr.user',{
+                    abstract: true,
+                    url: '/user',
+                    templateUrl: 'app/user/profile.html'
+                })
+                .state('funglr.user.mainscreen',{
+                    abstract: true,
+                    url: '',
+                    templateUrl: 'app/user/views/mainscreen.html',
+                    controller: 'userController as userCtrl'
+                })
+                .state('funglr.user.mainscreen.landing', {
+                     url: '/mainscreen',
+                    views: {
+                        'profilenav': {
+                            templateUrl: 'app/user/views/profilenav.html',
+                            controller: 'profileNavCtrl as pNav'
+                        },
+                        'dashnav': {
+                            templateUrl: 'app/user/views/dashnav.html',
+                            controller: 'dashNavCtrl as dNav'
+                        },
+                        'dashmain': {
+                            templateUrl: 'app/user/views/userdashmain.html',
+                            controller: 'dashMainCtrl as dMain'
+                        }
+                    }
+                })
+                .state('funglr.user.dashboard',{
+                    abstract: true,
+                    url: '',
+                    templateUrl: 'app/dashboard/maindash.html',
+                    controller: 'dashController as dashCtrl'
+                })
+                .state('funglr.user.dashboard.landing', {
+                     url: '/dashboard',
+                    views: {
+                        'userItems': {
+                            templateUrl: 'app/user/views/userItems.html',
+                            controller: 'userItemCtrl as uItem'
+                        },
+                        'dashselections': {
+                            templateUrl: 'app/user/views/dashselections.html',
+                            controller: 'dashSelectionCtrl as dSec'
+                        },
+                        'maincontent': {
+                            templateUrl: 'app/user/views/maincontent.html',
+                            controller: 'mainContentCtrl as mContent'
+                        }
+                    }
                 });
-
-        }])
+        }]);
 }(window));

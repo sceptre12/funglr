@@ -9,7 +9,7 @@
 	gulp.task('default', ['scripts', 'sass','watch']);
 
 	gulp.task('scripts', function(){
-		return gulp.src(['app/main/js/mainConfig.js','app/main/js/*.js','app/*/*/*.js'])
+		return gulp.src(['app/main/js/mainConfig.js','app/main/js/**.js','app/**.js'])
 			.pipe(concat('main.js'))
 			.pipe(gulp.dest('build/js'));		
 	});
@@ -24,7 +24,7 @@
 		// watch the sass files
 		gulp.watch('styles/sass/**/*.scss',['sass']);
 		//watch the js files
-		gulp.watch(['app/main/js/mainConfig.js','app/main/js/*.js', 'app/*/*/*.js'], ['scripts']);
+		gulp.watch(['app/main/js/mainConfig.js','app/main/js/**.js', 'app/**.js'], ['scripts']);
 		// Create a live Reload Server
 		livereload.listen();
 

@@ -12,7 +12,8 @@
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav">
                 <li ng-repeat="navLinks in nav.navListTab" ui-sref-active="active">
-                    <a ui-sref="{{navLinks.link}}">{{navLinks.name}}</a>
+                    
+                    <a ui-sref="{{navLinks.link}}" ng-if="!(navLinks.name == 'Contact' && nav.userIsLogged) ">{{navLinks.name}}</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right">

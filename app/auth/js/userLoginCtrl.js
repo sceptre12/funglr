@@ -1,7 +1,7 @@
 (function (window){
 	var angular = window.angular;
 	angular.module('funglr.auth')
-	.controller('userLoginCtrl', ['AuthFactory', function(AuthFactory){
+	.controller('userLoginCtrl', ['AuthFactory','$state','$rootScope', function(AuthFactory,$state,$rootScope){
 		var userlogin = this;
 		userlogin.user = {
 			email: "",
@@ -10,8 +10,10 @@
 		userlogin.login = function(){
 			AuthFactory.login(userlogin.user)
 			.then(function(){
-				console.log('success');
+				console.log($rootScope.currentUser)
+				$state.go('funglr.user.mainscreen.landing');
 			}).catch(function(error){
+				userlogin.error = error;
 				console.log(error);
 			});
 		};

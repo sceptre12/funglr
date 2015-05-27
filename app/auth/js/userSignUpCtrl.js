@@ -1,7 +1,7 @@
 (function (window){
 	var angular = window.angular;
 	angular.module('funglr.auth')
-	.controller('userSignUpCtrl', ['AuthFactory', function(AuthFactory){
+	.controller('userSignUpCtrl', ['AuthFactory','$state', function(AuthFactory,$state){
 		var userRegister = this;
 		userRegister.user = {
 			firstname 	: "",
@@ -14,7 +14,6 @@
 			AuthFactory.register(userRegister.user)
 			.then(function(user){
 				AuthFactory.login(userRegister.user);
-				console.log(user);
 			}).catch(function(error){
 				console.log(error);
 			})

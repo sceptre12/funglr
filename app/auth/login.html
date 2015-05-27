@@ -2,6 +2,11 @@
     <div class="row">
         <div class="col-sm-offset-3 col-sm-6 ">
             <h1>Login Here </h1>
+            <div ng-show="login.error">
+                <!--i need to fix this error message -->
+                <h3>Sorry This Error Occurred</h3>
+                <p>{{login.error}}</p>
+            </div>
             <form name="usrlogin"  ng-submit="login.login()" novalidate>
                 <div class="form-group" >
                     <label for="email">Email address</label>
