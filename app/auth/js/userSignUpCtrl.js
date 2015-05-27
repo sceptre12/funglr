@@ -3,7 +3,13 @@
 	angular.module('funglr.auth')
 	.controller('userSignUpCtrl', ['AuthFactory', function(AuthFactory){
 		var userRegister = this;
-
+		userRegister.user = {
+			firstname 	: "",
+			lastname	: "",
+			email		: "",
+			password	: "",
+			test		: ""
+		};
 		userRegister.register = function(){
 			AuthFactory.register(userRegister.user)
 			.then(function(user){
@@ -12,9 +18,7 @@
 			}).catch(function(error){
 				console.log(error);
 			})
-		}
-		
-		console.log("work register");
+		};
 
 	}])
 }(window));

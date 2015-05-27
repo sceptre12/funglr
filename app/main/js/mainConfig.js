@@ -27,7 +27,7 @@
                 })
                 .state('funglr.login', {
                     url: '/login',
-                    controllers: 'userLoginCtrl as login',
+                    controller: 'userLoginCtrl as login',
                     templateUrl: 'app/auth/login.html'
                 })
                 .state('funglr.signup', {
