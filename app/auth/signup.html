@@ -2,6 +2,11 @@
     <div class="row">
         <div class="col-sm-offset-3 col-sm-6 ">
             <h1>Sign Up Here</h1>
+            <div ng-show="signUp.error">
+                <!--i need to fix this error message -->
+                <h3>Sorry This Error Occurred</h3>
+                <p>{{signUp.error}}</p>
+            </div>
             <!-- <div class="formblck" ng-if="!signUp.register.actions.isSuccess()"> -->
                 <form novalidate name="userRegistration" ng-submit="signUp.register()">
                     <div class="form-group">

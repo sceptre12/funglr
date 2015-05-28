@@ -8,7 +8,7 @@
                if(userData){
                    // if user is logged in
                    var ref = new Firebase(FUNGLR_DB + "/users/" + userData.uid);
-                   $rootScope.currentUser = $firebaseObject(ref);
+                   $rootScope.currentUser = $firebaseObject(ref);                   
                }else{
                    $rootScope.currentUser = "";
                }
@@ -25,7 +25,7 @@
                         email       : user.email,
                         password    : user.password
                     }).then(function(regUser){
-                        var ref = new Firebase(FUNGLR_DB+'users');
+                        var ref = new Firebase(FUNGLR_DB + '/users');
                         var userInfo = {
                             date        : Firebase.ServerValue.TIMESTAMP,
                             regUser     : regUser.uid,
@@ -35,6 +35,9 @@
                         };
                         ref.child(regUser.uid).set(userInfo);
                     })
+                },
+                logout : function(){
+                    auth.$unauth();
                 }
             }
             return myObj;
