@@ -8,6 +8,9 @@
             navCurr.userIsLogged = $rootScope.currentUser;
             // need help figuring out how to initiate the watch on
             // the above expression
-            navCurr.logout = AuthFactory.logout();
+            navCurr.logout = function(){
+                $state.go('funglr.home');
+                AuthFactory.logout();
+            };
         }]);
 }(window));

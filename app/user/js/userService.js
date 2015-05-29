@@ -2,20 +2,21 @@
     var angular = window.angular;
     angular.module('funglr.user')
         .factory('userFactory', ['FUNGLR_DB', '$rootScope', '$firebaseObject', '$firebaseArray', function(FUNGLR_DB, $rootScope, $firebaseObject, $firebaseArray) {
+           	console.log($rootScope.currentUser)
             var currUser = $rootScope.currentUser.regUser,
                 profile = "/users/" + currUser + "/profile";
-            var userProfile = new Firebase(FUNGLR_DB + Profile),
-                userProfileReblog = new Firbase(FUNGLR_DB + profile + "/reblogged"), // list of reblogged posts
-                userProfileFollowers = new Firebase(FUNGLR_DB + profile + "/followers"),
-                userProfileFollowing = new Firebase(FUNGLR_DB + profile + "/following"),
+            var userProfile = new Firebase(FUNGLR_DB + profile),
+                userProfileReblog = new Firebase(FUNGLR_DB + profile + "/reblogged"), // list of reblogged posts
+                userProfileFollowers = new Firebase(FUNGLR_DB + profile + "/followers"),// list of followers
+                userProfileFollowing = new Firebase(FUNGLR_DB + profile + "/following"),// list of all those who user is following
                 userProfileBlogFeed = new Firebase(FUNGLR_DB + profile + "/blogfeed"), // list of all the blogs the user has ether reblogged, created, or is following from someone 
                 insertpost = "/dashboard/data/post",
                 dashText = new Firebase(FUNGLR_DB + insertpost + "/text"),
                 dashImage = new Firebase(FUNGLR_DB + insertpost + "/image"),
                 dashAudio = new Firebase(FUNGLR_DB + insertpost + "/audio");
-
+				
             var postEssentials = function(post, type, newpost) {
-                var postkey = newPost.key(),
+                var postkey = newpost.key(),
                     commentPosts = new Firebase(FUNGLR_DB + insertpost + type + postkey + "/comments"),
                     reblogged = new Firebase(FUNGLR_DB + insertpost + type + postkey + "/reblogged"), // list of users that have reblogged
                     liked = new Firebase(FUNGLR_DB + insertpost + type + postkey + "/liked"); // list of people that have liked the post
@@ -46,8 +47,8 @@
                     } else if (dashImage.hasChild(key)) {
                         return determineOwner(dashImage);
                     } else {
+                    	console.log("No one owns post");
                         return null;
-                        console.log("No one owns post")
                     }
                 },
                 insertPost: {
@@ -111,14 +112,14 @@
                     var removeComment = function(dashSomething) {
                         dashSomething.child(postkey).child('comments').child(commentkey).remove();
                     };
-                    if (dashText.hasChild(key)) {
+                    if (dashText.hasChild(postkey)) {
                         removeComment();
-                    } else if (dashAudio.hasChild(key)) {
+                    } else if (dashAudio.hasChild(postkey)) {
                         removeComment();
-                    } else if (dashImage.hasChild(key)) {
+                    } else if (dashImage.hasChild(postkey)) {
                         removeComment();
                     } else {
-                        console.log("No post to delete")
+                        console.log("No post to delete");
                     }
                 },
                 reblogPost: function(key) {
@@ -133,7 +134,7 @@
                         });
                         userProfileBlogFeed.push({
                             "postid": key
-                        })
+                        });
                         dashSomething.child(key).child('reblogged').push({
                             'userid': currUser
                         });
@@ -145,7 +146,7 @@
                     } else if (dashImage.hasChild(key)) {
                         reblog(dashImage);
                     } else {
-                        console.log("an error occured No child available")
+                        console.log("an error occured in reblog No child available");
                     }
                 },
                 unReblog: function(key) {
@@ -157,19 +158,19 @@
                 		*/
                         userProfileReblog.forEach(function(childData) {
                             if (childData.userid.val() === key) {
-                                childData.remove();
+                                childData.key().remove();
                                 return true;
                             }
                         });
                         userProfileBlogFeed.forEach(function(childData) {
                             if (childData.postid.val() === key) {
-                                childData.remove();
+                                childData.key().remove();
                                 return true;
                             }
                         });
                         dashSomething.child(key).child('reblogged').forEach(function(childData) {
                             if (childData.userid.val() === currUser) {
-                                childData.remove();
+                                childData.key().remove();
                                 return true;
                             }
                         });
@@ -181,7 +182,7 @@
                     } else if (dashImage.hasChild(key)) {
                         unreblog(dashImage);
                     } else {
-                        console.log("an error occured No child available")
+                        console.log("an error occured in unreblog No child available");
                     }
                 },
                 follow: function(userid) {
@@ -197,17 +198,51 @@
                     });
                     followingBlogFeed.forEach(function(data){
                     	userArrList.$add({
-                        	userid: users.val().postid
+                        	'userid': data.val().postid
                         });
-                    })
+                    });
                     if (!found) {
                         followingList.push({
-                            "userid": currUser
+                            'userid': currUser
                         });
                     }
                     userProfileFollowing.push({
-                        "userid": userid
+                        'userid': userid
                     });
+                },
+                likePost: function(key){
+                	var likedPost = function(dashSomething){
+                		dashSomething.child(key).child('liked').push({
+                			'userid': currUser 
+                		});
+                	};
+                	if (dashText.hasChild(key)) {
+                        likedPost(dashText);
+                    } else if (dashAudio.hasChild(key)) {
+                        likedPost(dashAudio);
+                    } else if (dashImage.hasChild(key)) {
+                        likedPost(dashImage);
+                    } else {
+                        console.log("an error occured in likedPost No child available");
+                    }	
+                },
+                unLikePost: function(key){
+                	var likedPost = function(dashSomething){
+                		dashSomething.child(key).child('liked').forEach(function(liked){
+                			if(liked.val().userid === currUser){
+                				liked.key().remove();
+                			}
+                		});
+                	};
+                	if (dashText.hasChild(key)) {
+                        likedPost(dashText);
+                    } else if (dashAudio.hasChild(key)) {
+                        likedPost(dashAudio);
+                    } else if (dashImage.hasChild(key)) {
+                        likedPost(dashImage);
+                    } else {
+                        console.log("an error occured in unLikePost No child available");
+                    }	
                 }
             };
             return userChoices;

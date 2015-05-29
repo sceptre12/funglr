@@ -34,12 +34,12 @@
                             email       : user.email
                         };
                         ref.child(regUser.uid).set(userInfo);
-                    })
+                    });
                 },
                 logout : function(){
                     auth.$unauth();
                 }
-            }
+            };
             return myObj;
 
         }]);

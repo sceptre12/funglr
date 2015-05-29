@@ -2,3 +2,5 @@ body,html{
 	@include sameWH(100%);
 	position: relative;
 }
+// ui boostrap fixes
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }
