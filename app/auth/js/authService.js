@@ -38,6 +38,9 @@
                 },
                 logout : function(){
                     auth.$unauth();
+                },
+                requireAuth: function(){
+                    auth.$requireAuth();
                 }
             };
             return myObj;

@@ -2,8 +2,8 @@
      <h1>Welcome {{currentUser.firstname + " " + currentUser.lastname}}</h1>
      <hr>
      <ul>
-          <li ng-repeat="navlist in dNav.nav">
-               <h3>{{navlist.name}}</h3>
+          <li ng-repeat="navlist in nav">
+               <button class="btn" ng-click="clicked(navlist.name)">{{navlist.name}}</button>
           </li>
      </ul>
 </div>

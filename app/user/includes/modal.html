@@ -1,1 +1,29 @@
-fqwqfqwf
+<form name="postForm" novalidate class="form-horizontal">
+    <div class="modal-header">
+        <h3 class="modal-title">{{typeOfPost}} Post</h3>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label for="title" class="col-sm-2 control-label">Title</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="title" placeholder="Title"
+                ng-model="post.title" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="subject" class="col-sm-2 control-label">Subject</label>
+            <div class="col-sm-10">
+                <input type="text" class="form-control" id="subject" placeholder="Subject"
+                ng-model="post.subject" required>
+            </div>
+        </div>
+            <textarea class="form-control" rows="3" placeholder="Body" 
+            ng-model="post.body" required ></textarea>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-success" ng-click="insertPost()" ng-disabled="postForm.$invalid">Submit</button>
+        <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+    </div>
+</form>
+<p>{{post.title}}</p>
+<p>{{post.subject}}</p>

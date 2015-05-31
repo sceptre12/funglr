@@ -47,6 +47,11 @@
                     abstract: true,
                     url: '/user',
                     templateUrl: 'app/user/profile.html'
+                    // resolve:{
+                    //     currentAuth: function(Authentication){
+                    //         return Authentication.requireAuth();
+                    //     }
+                    // }
                 })
                 .state('funglr.user.mainscreen',{
                     abstract: true,
