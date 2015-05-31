@@ -15,11 +15,9 @@
         
         if($scope.typeOfPost === "Text"){
             $scope.insertPost = function(){
-                console.log($scope.post)
 			    userFactory.insertPost.text($scope.post);
 			    $modalInstance.close();
 		    };
-		    
         }else if($scope.typeOfPost === "Image"){
             $scope.insertPost = function(){
     			userFactory.insertPost.image($scope.post);

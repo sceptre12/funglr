@@ -39,11 +39,8 @@
                 logout : function(){
                     auth.$unauth();
                 },
-                requireAuth: function(){
-                    ref.getAuth();
-                }
+                requireAuth:auth.$requireAuth()
             };
             return myObj;
-
         }]);
 }(window));

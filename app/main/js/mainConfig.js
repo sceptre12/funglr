@@ -4,14 +4,9 @@
         .run(["$rootScope", '$state', function($rootScope, $state) {
             $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
                 if (error === "AUTH_REQUIRED") {
+                    $rootScope.RouteChangeError = error
                     $state.go('funglr.login');
                 }
-                console.log(event);
-                console.log(toState);
-                console.log(toParams);
-                console.log(fromState);
-                console.log(fromParams);
-                console.log(error);
             });
         }])
         .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
@@ -62,9 +57,7 @@
                     templateUrl: 'app/user/profile.html',
                     resolve: {
                         currentAuth: function(AuthFactory) {
-                                console.log(AuthFactory.requireAuth());
-                                console.log(AuthFactory.logout());
-                            return AuthFactory.requireAuth();
+                            return AuthFactory.requireAuth;
                         }
                     }
                 })

@@ -1,6 +1,9 @@
 <div class="container anim-slide-below-fade" data-anim-speed="500" id="login">
     <div class="row">
         <div class="col-sm-offset-3 col-sm-6 ">
+            <div ng-show="RouteChangeError" >
+                <h2 style="color:red">{{RouteChangeError}}</h2>
+            </div>
             <h1>Login Here </h1>
             <div ng-show="login.error">
                 <!--i need to fix this error message -->
