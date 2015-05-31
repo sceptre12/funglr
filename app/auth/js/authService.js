@@ -40,7 +40,7 @@
                     auth.$unauth();
                 },
                 requireAuth: function(){
-                    auth.$requireAuth();
+                    ref.getAuth();
                 }
             };
             return myObj;

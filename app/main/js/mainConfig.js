@@ -1,6 +1,19 @@
 (function(window) {
     var angular = window.angular;
-    angular.module('funglr', ['ui.bootstrap', 'ui.router', 'ngAnimate', 'anim-in-out','funglr.user','funglr.dash','funglr.auth','firebase'])
+    angular.module('funglr', ['ui.bootstrap', 'ui.router', 'ngAnimate', 'anim-in-out', 'funglr.user', 'funglr.dash', 'funglr.auth', 'firebase'])
+        .run(["$rootScope", '$state', function($rootScope, $state) {
+            $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
+                if (error === "AUTH_REQUIRED") {
+                    $state.go('funglr.login');
+                }
+                console.log(event);
+                console.log(toState);
+                console.log(toParams);
+                console.log(fromState);
+                console.log(fromParams);
+                console.log(error);
+            });
+        }])
         .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
             $urlRouterProvider.otherwise('/home');
             $stateProvider
@@ -43,24 +56,26 @@
                     url: '/contact',
                     templateUrl: 'app/main/views/contact.html'
                 })
-                .state('funglr.user',{
+                .state('funglr.user', {
                     abstract: true,
                     url: '/user',
-                    templateUrl: 'app/user/profile.html'
-                    // resolve:{
-                    //     currentAuth: function(Authentication){
-                    //         return Authentication.requireAuth();
-                    //     }
-                    // }
+                    templateUrl: 'app/user/profile.html',
+                    resolve: {
+                        currentAuth: function(AuthFactory) {
+                                console.log(AuthFactory.requireAuth());
+                                console.log(AuthFactory.logout());
+                            return AuthFactory.requireAuth();
+                        }
+                    }
                 })
-                .state('funglr.user.mainscreen',{
+                .state('funglr.user.mainscreen', {
                     abstract: true,
                     url: '',
                     templateUrl: 'app/user/views/mainscreen.html',
                     controller: 'userController as userCtrl'
                 })
                 .state('funglr.user.mainscreen.landing', {
-                     url: '/mainscreen',
+                    url: '/mainscreen',
                     views: {
                         'profilenav': {
                             templateUrl: 'app/user/views/profilenav.html',
@@ -76,14 +91,14 @@
                         }
                     }
                 })
-                .state('funglr.user.dashboard',{
+                .state('funglr.user.dashboard', {
                     abstract: true,
                     url: '',
                     templateUrl: 'app/dashboard/maindash.html',
                     controller: 'dashController as dashCtrl'
                 })
                 .state('funglr.user.dashboard.landing', {
-                     url: '/dashboard',
+                    url: '/dashboard',
                     views: {
                         'userItems': {
                             templateUrl: 'app/user/views/userItems.html',
