@@ -4,5 +4,6 @@
 	.controller('dashMainCtrl', ['userFactory','$rootScope',function(userFactory,$rootScope){
 		var dMainCtrl = this;
 		dMainCtrl.listPost = userFactory.populateUserDash();
+		
 	}]);
 }(window));

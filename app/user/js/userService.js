@@ -2,19 +2,19 @@
     var angular = window.angular;
     angular.module('funglr.user')
         .factory('userFactory', ['FUNGLR_DB', '$rootScope', '$firebaseObject', '$firebaseArray', function(FUNGLR_DB, $rootScope, $firebaseObject, $firebaseArray) {
-           	console.log($rootScope.currentUser.regUser)
+            console.log($rootScope.currentUser.regUser)
             var currUser = $rootScope.currentUser.regUser,
                 profile = "/users/" + currUser + "/profile";
             var userProfile = new Firebase(FUNGLR_DB + profile),
                 userProfileReblog = new Firebase(FUNGLR_DB + profile + "/reblogged"), // list of reblogged posts
-                userProfileFollowers = new Firebase(FUNGLR_DB + profile + "/followers"),// list of followers
-                userProfileFollowing = new Firebase(FUNGLR_DB + profile + "/following"),// list of all those who user is following
+                userProfileFollowers = new Firebase(FUNGLR_DB + profile + "/followers"), // list of followers
+                userProfileFollowing = new Firebase(FUNGLR_DB + profile + "/following"), // list of all those who user is following
                 userProfileBlogFeed = new Firebase(FUNGLR_DB + profile + "/blogfeed"), // list of all the blogs the user has ether reblogged, created, or is following from someone 
                 insertpost = "/dashboard/data/post",
                 dashText = new Firebase(FUNGLR_DB + insertpost + "/text"),
                 dashImage = new Firebase(FUNGLR_DB + insertpost + "/image"),
                 dashAudio = new Firebase(FUNGLR_DB + insertpost + "/audio");
-				console.log(currUser);
+            console.log(currUser);
             var postEssentials = function(post, type, newpost) {
                 var postkey = newpost.key(),
                     commentPosts = new Firebase(FUNGLR_DB + insertpost + type + postkey + "/comments"),
@@ -43,12 +43,15 @@
                     };
                     if (dashText.hasChild(key)) {
                         return determineOwner(dashText);
-                    } else if (dashAudio.hasChild(key)) {
+                    }
+                    else if (dashAudio.hasChild(key)) {
                         return determineOwner(dashAudio);
-                    } else if (dashImage.hasChild(key)) {
+                    }
+                    else if (dashImage.hasChild(key)) {
                         return determineOwner(dashImage);
-                    } else {
-                    	console.log("No one owns post");
+                    }
+                    else {
+                        console.log("No one owns post");
                         return null;
                     }
                 },
@@ -121,11 +124,14 @@
                     };
                     if (dashText.hasChild(postkey)) {
                         removeComment();
-                    } else if (dashAudio.hasChild(postkey)) {
+                    }
+                    else if (dashAudio.hasChild(postkey)) {
                         removeComment();
-                    } else if (dashImage.hasChild(postkey)) {
+                    }
+                    else if (dashImage.hasChild(postkey)) {
                         removeComment();
-                    } else {
+                    }
+                    else {
                         console.log("No post to delete");
                     }
                 },
@@ -147,15 +153,18 @@
                             "postid": key,
                             'date': Firebase.ServerValue.TIMESTAMP
                         });
-                        
+
                     };
                     if (dashText.hasChild(key)) {
                         reblog(dashText);
-                    } else if (dashAudio.hasChild(key)) {
+                    }
+                    else if (dashAudio.hasChild(key)) {
                         reblog(dashAudio);
-                    } else if (dashImage.hasChild(key)) {
+                    }
+                    else if (dashImage.hasChild(key)) {
                         reblog(dashImage);
-                    } else {
+                    }
+                    else {
                         console.log("an error occured in reblog No child available");
                     }
                 },
@@ -187,11 +196,14 @@
                     };
                     if (dashText.hasChild(key)) {
                         unreblog(dashText);
-                    } else if (dashAudio.hasChild(key)) {
+                    }
+                    else if (dashAudio.hasChild(key)) {
                         unreblog(dashAudio);
-                    } else if (dashImage.hasChild(key)) {
+                    }
+                    else if (dashImage.hasChild(key)) {
                         unreblog(dashImage);
-                    } else {
+                    }
+                    else {
                         console.log("an error occured in unreblog No child available");
                     }
                 },
@@ -204,11 +216,11 @@
                     followingList.forEach(function(users) {
                         if (users.val().userid === currUser) {
                             found = true;
-                        }                        
+                        }
                     });
-                    followingBlogFeed.forEach(function(data){
-                    	userArrList.$add({
-                        	'userid': data.val().postid
+                    followingBlogFeed.forEach(function(data) {
+                        userArrList.$add({
+                            'userid': data.val().postid
                         });
                     });
                     if (!found) {
@@ -220,67 +232,81 @@
                         'userid': userid
                     });
                 },
-                likePost: function(key){
-                	var likedPost = function(dashSomething){
-                		dashSomething.child(key).child('liked').push({
-                			'userid': currUser 
-                		});
-                	};
-                	if (dashText.hasChild(key)) {
-                        likedPost(dashText);
-                    } else if (dashAudio.hasChild(key)) {
-                        likedPost(dashAudio);
-                    } else if (dashImage.hasChild(key)) {
-                        likedPost(dashImage);
-                    } else {
-                        console.log("an error occured in likedPost No child available");
-                    }	
-                },
-                unLikePost: function(key){
-                	var likedPost = function(dashSomething){
-                		dashSomething.child(key).child('liked').forEach(function(liked){
-                			if(liked.val().userid === currUser){
-                				liked.key().remove();
-                			}
-                		});
-                	};
-                	if (dashText.hasChild(key)) {
-                        likedPost(dashText);
-                    } else if (dashAudio.hasChild(key)) {
-                        likedPost(dashAudio);
-                    } else if (dashImage.hasChild(key)) {
-                        likedPost(dashImage);
-                    } else {
-                        console.log("an error occured in unLikePost No child available");
-                    }	
-                },
-                populateUserDash: function(){
-                    var userList = {
-                        items:[]
+                likePost: function(key) {
+                    var likedPost = function(dashSomething) {
+                        dashSomething.child(key).child('liked').push({
+                            'userid': currUser
+                        });
                     };
-                    
-                    userProfileBlogFeed.forEach(function(blogKey){
-                        var bKey = blogKey.val().postid;
-                        dashText.forEach(function(textKey){
-                            if(bKey === textKey.key()){
-                                userList.items.push(textKey);
-                                return true;
+                    if (dashText.hasChild(key)) {
+                        likedPost(dashText);
+                    }
+                    else if (dashAudio.hasChild(key)) {
+                        likedPost(dashAudio);
+                    }
+                    else if (dashImage.hasChild(key)) {
+                        likedPost(dashImage);
+                    }
+                    else {
+                        console.log("an error occured in likedPost No child available");
+                    }
+                },
+                unLikePost: function(key) {
+                    var likedPost = function(dashSomething) {
+                        dashSomething.child(key).child('liked').forEach(function(liked) {
+                            if (liked.val().userid === currUser) {
+                                liked.key().remove();
                             }
                         });
-                        dashImage.forEach(function(imageKey){
-                            if(bKey === imageKey.key()){
-                                userList.items.push(imageKey);
-                                return true;
-                            }
-                        });
-                        dashAudio.forEach(function(audioKey){
-                            if(bKey === audioKey.key()){
-                                userList.items.push(audioKey);
-                                return true; 
-                            }
+                    };
+                    if (dashText.hasChild(key)) {
+                        likedPost(dashText);
+                    }
+                    else if (dashAudio.hasChild(key)) {
+                        likedPost(dashAudio);
+                    }
+                    else if (dashImage.hasChild(key)) {
+                        likedPost(dashImage);
+                    }
+                    else {
+                        console.log("an error occured in unLikePost No child available");
+                    }
+                },
+                populateUserDash: function() {
+                    var userList = {
+                        items: []
+                    };
+
+                    var userBlog = $firebaseObject(userProfileBlogFeed),
+                        textInfo = $firebaseArray(dashText),
+                        imageInfo = $firebaseArray(dashImage),
+                        audioInfo = $firebaseArray(dashAudio);
+                    var store = function(text, image, audio, value) {
+                        if (text.$getRecord(value.postid) !== null) {
+                            userList.items.push(text.$getRecord(value.postid));
+                        }
+                        if (image.$getRecord(value.postid) !== null) {
+                            userList.items.push(image.$getRecord(value.postid));
+                        }
+                        if (audio.$getRecord(value.postid) !== null) {
+                            userList.items.push(image.$getRecord(value.postid));
+                        }
+                    };
+
+                    userBlog.$loaded().then(function() {
+                        textInfo.$loaded().then(function() {
+                            imageInfo.$loaded().then(function() {
+                                audioInfo.$loaded().then(function() {
+                                    angular.forEach(userBlog, function(value, key) {
+                                        store(textInfo, imageInfo, audioInfo, value);
+                                    });
+                                    console.log(userList.items)
+                                    return userList.items;
+                                });
+                            });
                         });
                     });
-                    return userList.items;
+
                 }
             };
             return userChoices;
