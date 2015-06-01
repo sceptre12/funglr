@@ -2,12 +2,12 @@
     var angular = window.angular;
     angular.module('funglr', ['ui.bootstrap', 'ui.router', 'ngAnimate', 'anim-in-out', 'funglr.user', 'funglr.dash', 'funglr.auth', 'firebase'])
         .run(["$rootScope", '$state', function($rootScope, $state) {
-            $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
-                if (error === "AUTH_REQUIRED") {
-                    $rootScope.RouteChangeError = error
-                    $state.go('funglr.login');
-                }
-            });
+            // $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
+            //     if (error === "AUTH_REQUIRED") {
+            //         $rootScope.RouteChangeError = error;
+            //         $state.go('funglr.login');
+            //     }
+            // });
         }])
         .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
             $urlRouterProvider.otherwise('/home');
@@ -54,12 +54,12 @@
                 .state('funglr.user', {
                     abstract: true,
                     url: '/user',
-                    templateUrl: 'app/user/profile.html',
-                    resolve: {
-                        currentAuth: function(AuthFactory) {
-                            return AuthFactory.requireAuth;
-                        }
-                    }
+                    templateUrl: 'app/user/profile.html'
+                    // resolve: {
+                    //     currentAuth: function(AuthFactory) {
+                    //         return AuthFactory.requireAuth;
+                    //     }
+                    // }
                 })
                 .state('funglr.user.mainscreen', {
                     abstract: true,

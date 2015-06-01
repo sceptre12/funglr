@@ -273,40 +273,22 @@
                     }
                 },
                 populateUserDash: function() {
-                    var userList = {
-                        items: []
-                    };
 
-                    var userBlog = $firebaseObject(userProfileBlogFeed),
+
+                    var userBlog = $firebaseArray(userProfileBlogFeed),
                         textInfo = $firebaseArray(dashText),
                         imageInfo = $firebaseArray(dashImage),
                         audioInfo = $firebaseArray(dashAudio);
-                    var store = function(text, image, audio, value) {
-                        if (text.$getRecord(value.postid) !== null) {
-                            userList.items.push(text.$getRecord(value.postid));
-                        }
-                        if (image.$getRecord(value.postid) !== null) {
-                            userList.items.push(image.$getRecord(value.postid));
-                        }
-                        if (audio.$getRecord(value.postid) !== null) {
-                            userList.items.push(image.$getRecord(value.postid));
-                        }
-                    };
-
-                    userBlog.$loaded().then(function() {
-                        textInfo.$loaded().then(function() {
-                            imageInfo.$loaded().then(function() {
-                                audioInfo.$loaded().then(function() {
-                                    angular.forEach(userBlog, function(value, key) {
-                                        store(textInfo, imageInfo, audioInfo, value);
-                                    });
-                                    console.log(userList.items)
-                                    return userList.items;
-                                });
-                            });
-                        });
-                    });
-
+                        
+                        
+                       var list = {
+                           blog: userBlog,
+                           text: textInfo,
+                           image: imageInfo,
+                           audio: audioInfo
+                       }
+                       
+                       return list;
                 }
             };
             return userChoices;

@@ -10,7 +10,6 @@
 		userlogin.login = function(){
 			AuthFactory.login(userlogin.user)
 			.then(function(){
-				console.log($rootScope.currentUser)
 				$state.go('funglr.user.mainscreen.landing');
 			}).catch(function(error){
 				userlogin.error = error;
