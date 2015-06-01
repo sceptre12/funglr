@@ -2,7 +2,7 @@
     var angular = window.angular;
     angular.module('funglr.user')
         .factory('userFactory', ['FUNGLR_DB', '$rootScope', '$firebaseObject', '$firebaseArray', function(FUNGLR_DB, $rootScope, $firebaseObject, $firebaseArray) {
-           	console.log($rootScope.currentUser)
+           	console.log($rootScope.currentUser.regUser)
             var currUser = $rootScope.currentUser.regUser,
                 profile = "/users/" + currUser + "/profile";
             var userProfile = new Firebase(FUNGLR_DB + profile),
@@ -14,7 +14,7 @@
                 dashText = new Firebase(FUNGLR_DB + insertpost + "/text"),
                 dashImage = new Firebase(FUNGLR_DB + insertpost + "/image"),
                 dashAudio = new Firebase(FUNGLR_DB + insertpost + "/audio");
-				
+				console.log(currUser);
             var postEssentials = function(post, type, newpost) {
                 var postkey = newpost.key(),
                     commentPosts = new Firebase(FUNGLR_DB + insertpost + type + postkey + "/comments"),
@@ -23,7 +23,8 @@
                 if (post.comment) {
                     commentPosts.push({
                         'owner': currUser,
-                        'comment': post.comment
+                        'comment': post.comment,
+                        'date': Firebase.ServerValue.TIMESTAMP
                     });
                 }
                 userProfileBlogFeed.push({
@@ -57,7 +58,8 @@
                             'title': post.title,
                             'subject': post.subject,
                             'body': post.body,
-                            'owner': currUser
+                            'owner': currUser,
+                            'date': Firebase.ServerValue.TIMESTAMP
                         });
                         postEssentials(post, "/text/", newPost);
                     },
@@ -65,7 +67,8 @@
                         var newPost = dashImage.push({
                             'title': post.title,
                             'image': post.body,
-                            'owner': currUser
+                            'owner': currUser,
+                            'date': Firebase.ServerValue.TIMESTAMP
                         });
                         postEssentials(post, "/image/", newPost);
                     },
@@ -73,7 +76,8 @@
                         var newPost = dashAudio.push({
                             'title': post.title,
                             'audio': post.audio,
-                            'owner': currUser
+                            'owner': currUser,
+                            'date': Firebase.ServerValue.TIMESTAMP
                         });
                         postEssentials(post, "/audio/", newPost);
                     }
@@ -90,19 +94,22 @@
                     text: function(key, post) {
                         dashText.child(key).child('comments').push({
                             'owner': currUser,
-                            'comment': post.comment
+                            'comment': post.comment,
+                            'date': Firebase.ServerValue.TIMESTAMP
                         });
                     },
                     image: function(key, post) {
                         dashImage.child(key).child('comments').push({
                             'owner': currUser,
-                            'comment': post.comment
+                            'comment': post.comment,
+                            'date': Firebase.ServerValue.TIMESTAMP
                         });
                     },
                     audio: function(key, post) {
                         dashAudio.child(key).child('comments').push({
                             'owner': currUser,
-                            'comment': post.comment
+                            'comment': post.comment,
+                            'date': Firebase.ServerValue.TIMESTAMP
                         });
                     }
                 },
@@ -132,12 +139,15 @@
                         userProfileReblog.push({
                             'userid': key
                         });
-                        userProfileBlogFeed.push({
-                            "postid": key
-                        });
                         dashSomething.child(key).child('reblogged').push({
-                            'userid': currUser
+                            'userid': currUser,
+                            'date': Firebase.ServerValue.TIMESTAMP
                         });
+                        userProfileBlogFeed.push({
+                            "postid": key,
+                            'date': Firebase.ServerValue.TIMESTAMP
+                        });
+                        
                     };
                     if (dashText.hasChild(key)) {
                         reblog(dashText);
@@ -243,6 +253,34 @@
                     } else {
                         console.log("an error occured in unLikePost No child available");
                     }	
+                },
+                populateUserDash: function(){
+                    var userList = {
+                        items:[]
+                    };
+                    
+                    userProfileBlogFeed.forEach(function(blogKey){
+                        var bKey = blogKey.val().postid;
+                        dashText.forEach(function(textKey){
+                            if(bKey === textKey.key()){
+                                userList.items.push(textKey);
+                                return true;
+                            }
+                        });
+                        dashImage.forEach(function(imageKey){
+                            if(bKey === imageKey.key()){
+                                userList.items.push(imageKey);
+                                return true;
+                            }
+                        });
+                        dashAudio.forEach(function(audioKey){
+                            if(bKey === audioKey.key()){
+                                userList.items.push(audioKey);
+                                return true; 
+                            }
+                        });
+                    });
+                    return userList.items;
                 }
             };
             return userChoices;

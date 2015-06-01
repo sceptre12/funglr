@@ -3,33 +3,46 @@
     angular.module('funglr')
         .factory('mainService', function() {
             var pages = {
-                list: [{
-                	name: 'Home',
+                homeList: [{
+                    name: 'Home',
                     link: 'funglr.home'
                 }, {
-                	name: 'About',
+                    name: 'About',
                     link: 'funglr.about'
                 }, {
-                	name: 'Contact',
+                    name: 'Contact',
                     link: 'funglr.contact'
                 }],
                 listLogin: [{
-                	name: 'SignUp',
+                    name: 'SignUp',
                     link: 'funglr.signup'
                 }, {
-                	name: 'Login',
+                    name: 'Login',
                     link: 'funglr.login'
+                }],
+                userList: [{
+                    name: 'Profile page',
+                    link: 'funglr.user.mainscreen.landing'
+                }, {
+                    name: 'User Dashboard',
+                    link: 'funglr.user.dashboard.post.landing'
                 }]
+
             };
-            var getListTab = function(){
-            	return pages.list;
-            }
-            var getLoginTab = function(){
-            	return pages.listLogin;
-            }
-            return {
-            	getListTab: getListTab(),
-            	getLoginTab: getLoginTab()
-            }
+            var mainServices = {
+                getHListTab: function() {
+                    return pages.homeList;
+                },
+                getUListTab: function(){
+                    return pages.userList;
+                },
+                getLoginTab: function() {
+                    return pages.listLogin;
+                }
+
+            };
+
+
+            return mainServices;
         });
 }(window));

@@ -87,25 +87,34 @@
                 .state('funglr.user.dashboard', {
                     abstract: true,
                     url: '',
-                    templateUrl: 'app/dashboard/maindash.html',
+                    template: '<ui-view/>',
+                })
+                .state('funglr.user.dashboard.post',{
+                    abstract: true,
+                    url: '/dashboard',
+                    templateUrl: 'app/dashboard/userdash.html',
                     controller: 'dashController as dashCtrl'
                 })
-                .state('funglr.user.dashboard.landing', {
-                    url: '/dashboard',
+                .state('funglr.user.dashboard.post.landing', {
+                    url: '/post',
                     views: {
                         'userItems': {
-                            templateUrl: 'app/user/views/userItems.html',
+                            templateUrl: 'app/dashboard/views/userItems.html',
                             controller: 'userItemCtrl as uItem'
                         },
                         'dashselections': {
-                            templateUrl: 'app/user/views/dashselections.html',
-                            controller: 'dashSelectionCtrl as dSec'
+                            templateUrl: 'app/user/views/dashnav.html',
+                            controller: 'dashNavCtrl as dSelc'
                         },
                         'maincontent': {
-                            templateUrl: 'app/user/views/maincontent.html',
+                            templateUrl: 'app/dashboard/views/maincontent.html',
                             controller: 'mainContentCtrl as mContent'
                         }
                     }
+                })
+                .state('funglr.dashboard',{
+                    abstract: true,
+                    url: '/dashboard'
                 });
         }]);
 }(window));
