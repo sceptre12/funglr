@@ -13,11 +13,12 @@
                 insertpost = "/dashboard/data/post",
                 dashPost = new Firebase(FUNGLR_DB + insertpost);
             console.log(currUser);
+            
             var postEssentials = function(post, newpost) {
                 var postkey = newpost.key(),
-                    commentPosts = new Firebase(FUNGLR_DB + insertpost + postkey + "/comments"),
-                    reblogged = new Firebase(FUNGLR_DB + insertpost + postkey + "/reblogged"), // list of users that have reblogged
-                    liked = new Firebase(FUNGLR_DB + insertpost + postkey + "/liked"); // list of people that have liked the post
+                    commentPosts = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/comments"),
+                    reblogged = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/reblogged"), // list of users that have reblogged
+                    liked = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/liked"); // list of people that have liked the post
                 if (post.comment) {
                     commentPosts.push({
                         'owner': currUser,
@@ -39,7 +40,7 @@
                     var determineOwner = function(dashSomething) {
                         return dashSomething.child(key).child("owner");
                     };
-                    if(dashPost.hasChild(key)){
+                    if (dashPost.hasChild(key)) {
                         determineOwner(dashPost);
                     }
                     else {
@@ -59,7 +60,7 @@
                             'image': post.image,
                             'audio': post.audio
                         });
-                        postEssentials(post,newPost);
+                        postEssentials(post, newPost);
                     }
                 },
                 removePost: function(postkey) {
@@ -85,7 +86,7 @@
                     var removeComment = function(dashSomething) {
                         dashSomething.child(postkey).child('comments').child(commentkey).remove();
                     };
-                    if(dashPost.hasChild(key)){
+                    if (dashPost.hasChild(key)) {
                         removeComment(dashPost);
                     }
                     else {
@@ -112,7 +113,7 @@
                         });
 
                     };
-                    if(dashPost.hasChild(key)){
+                    if (dashPost.hasChild(key)) {
                         reblog(dashPost);
                     }
                     else {
@@ -145,7 +146,7 @@
                             }
                         });
                     };
-                    if(dashPost.hasChild(key)){
+                    if (dashPost.hasChild(key)) {
                         unreblog(dashPost);
                     }
                     else {
@@ -183,14 +184,8 @@
                             'userid': currUser
                         });
                     };
-                    if (dashText.hasChild(key)) {
-                        likedPost(dashText);
-                    }
-                    else if (dashAudio.hasChild(key)) {
-                        likedPost(dashAudio);
-                    }
-                    else if (dashImage.hasChild(key)) {
-                        likedPost(dashImage);
+                    if (dashPost.hasChild(key)) {
+                        likedPost(dashPost);
                     }
                     else {
                         console.log("an error occured in likedPost No child available");
@@ -204,36 +199,15 @@
                             }
                         });
                     };
-                    if (dashText.hasChild(key)) {
-                        likedPost(dashText);
-                    }
-                    else if (dashAudio.hasChild(key)) {
-                        likedPost(dashAudio);
-                    }
-                    else if (dashImage.hasChild(key)) {
-                        likedPost(dashImage);
+                    if (dashPost.hasChild(key)) {
+                        likedPost(dashPost);
                     }
                     else {
                         console.log("an error occured in unLikePost No child available");
                     }
                 },
-                populateUserDash: function() {
-
-
-                    var userBlog = $firebaseArray(userProfileBlogFeed),
-                        textInfo = $firebaseArray(dashText),
-                        imageInfo = $firebaseArray(dashImage),
-                        audioInfo = $firebaseArray(dashAudio);
-                        
-                        
-                       var list = {
-                           blog: userBlog,
-                           text: textInfo,
-                           image: imageInfo,
-                           audio: audioInfo
-                       }
-                       
-                       return list;
+                pullPosts: function() {
+                    return  $firebaseArray(dashPost);
                 }
             };
             return userChoices;
