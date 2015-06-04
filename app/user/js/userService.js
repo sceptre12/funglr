@@ -11,15 +11,13 @@
                 userProfileFollowing = new Firebase(FUNGLR_DB + profile + "/following"), // list of all those who user is following
                 userProfileBlogFeed = new Firebase(FUNGLR_DB + profile + "/blogfeed"), // list of all the blogs the user has ether reblogged, created, or is following from someone 
                 insertpost = "/dashboard/data/post",
-                dashText = new Firebase(FUNGLR_DB + insertpost + "/text"),
-                dashImage = new Firebase(FUNGLR_DB + insertpost + "/image"),
-                dashAudio = new Firebase(FUNGLR_DB + insertpost + "/audio");
+                dashPost = new Firebase(FUNGLR_DB + insertpost);
             console.log(currUser);
-            var postEssentials = function(post, type, newpost) {
+            var postEssentials = function(post, newpost) {
                 var postkey = newpost.key(),
-                    commentPosts = new Firebase(FUNGLR_DB + insertpost + type + postkey + "/comments"),
-                    reblogged = new Firebase(FUNGLR_DB + insertpost + type + postkey + "/reblogged"), // list of users that have reblogged
-                    liked = new Firebase(FUNGLR_DB + insertpost + type + postkey + "/liked"); // list of people that have liked the post
+                    commentPosts = new Firebase(FUNGLR_DB + insertpost + postkey + "/comments"),
+                    reblogged = new Firebase(FUNGLR_DB + insertpost + postkey + "/reblogged"), // list of users that have reblogged
+                    liked = new Firebase(FUNGLR_DB + insertpost + postkey + "/liked"); // list of people that have liked the post
                 if (post.comment) {
                     commentPosts.push({
                         'owner': currUser,
@@ -41,14 +39,8 @@
                     var determineOwner = function(dashSomething) {
                         return dashSomething.child(key).child("owner");
                     };
-                    if (dashText.hasChild(key)) {
-                        return determineOwner(dashText);
-                    }
-                    else if (dashAudio.hasChild(key)) {
-                        return determineOwner(dashAudio);
-                    }
-                    else if (dashImage.hasChild(key)) {
-                        return determineOwner(dashImage);
+                    if(dashPost.hasChild(key)){
+                        determineOwner(dashPost);
                     }
                     else {
                         console.log("No one owns post");
@@ -56,33 +48,18 @@
                     }
                 },
                 insertPost: {
-                    text: function(post) {
-                        var newPost = dashText.push({
+                    post: function(post) {
+                        var newPost = dashPost.push({
                             'title': post.title,
                             'subject': post.subject,
                             'body': post.body,
                             'owner': currUser,
-                            'date': Firebase.ServerValue.TIMESTAMP
+                            'date': Firebase.ServerValue.TIMESTAMP,
+                            'type': post.type,
+                            'image': post.image,
+                            'audio': post.audio
                         });
-                        postEssentials(post, "/text/", newPost);
-                    },
-                    image: function(post) {
-                        var newPost = dashImage.push({
-                            'title': post.title,
-                            'image': post.body,
-                            'owner': currUser,
-                            'date': Firebase.ServerValue.TIMESTAMP
-                        });
-                        postEssentials(post, "/image/", newPost);
-                    },
-                    audio: function(post) {
-                        var newPost = dashAudio.push({
-                            'title': post.title,
-                            'audio': post.audio,
-                            'owner': currUser,
-                            'date': Firebase.ServerValue.TIMESTAMP
-                        });
-                        postEssentials(post, "/audio/", newPost);
+                        postEssentials(post,newPost);
                     }
                 },
                 removePost: function(postkey) {
@@ -94,22 +71,8 @@
                     }
                 },
                 addComments: {
-                    text: function(key, post) {
-                        dashText.child(key).child('comments').push({
-                            'owner': currUser,
-                            'comment': post.comment,
-                            'date': Firebase.ServerValue.TIMESTAMP
-                        });
-                    },
-                    image: function(key, post) {
-                        dashImage.child(key).child('comments').push({
-                            'owner': currUser,
-                            'comment': post.comment,
-                            'date': Firebase.ServerValue.TIMESTAMP
-                        });
-                    },
-                    audio: function(key, post) {
-                        dashAudio.child(key).child('comments').push({
+                    post: function(key, post) {
+                        dashPost.child(key).child('comments').push({
                             'owner': currUser,
                             'comment': post.comment,
                             'date': Firebase.ServerValue.TIMESTAMP
@@ -122,14 +85,8 @@
                     var removeComment = function(dashSomething) {
                         dashSomething.child(postkey).child('comments').child(commentkey).remove();
                     };
-                    if (dashText.hasChild(postkey)) {
-                        removeComment();
-                    }
-                    else if (dashAudio.hasChild(postkey)) {
-                        removeComment();
-                    }
-                    else if (dashImage.hasChild(postkey)) {
-                        removeComment();
+                    if(dashPost.hasChild(key)){
+                        removeComment(dashPost);
                     }
                     else {
                         console.log("No post to delete");
@@ -155,14 +112,8 @@
                         });
 
                     };
-                    if (dashText.hasChild(key)) {
-                        reblog(dashText);
-                    }
-                    else if (dashAudio.hasChild(key)) {
-                        reblog(dashAudio);
-                    }
-                    else if (dashImage.hasChild(key)) {
-                        reblog(dashImage);
+                    if(dashPost.hasChild(key)){
+                        reblog(dashPost);
                     }
                     else {
                         console.log("an error occured in reblog No child available");
@@ -194,14 +145,8 @@
                             }
                         });
                     };
-                    if (dashText.hasChild(key)) {
-                        unreblog(dashText);
-                    }
-                    else if (dashAudio.hasChild(key)) {
-                        unreblog(dashAudio);
-                    }
-                    else if (dashImage.hasChild(key)) {
-                        unreblog(dashImage);
+                    if(dashPost.hasChild(key)){
+                        unreblog(dashPost);
                     }
                     else {
                         console.log("an error occured in unreblog No child available");
