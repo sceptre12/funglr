@@ -17,7 +17,7 @@
 
             $scope.insertPost = function() {
                 userFactory.insertPost.post($scope.post);
-                $modalInstance.close();
+                $modalInstance.close(); 
             };
 
             $scope.cancel = function() {

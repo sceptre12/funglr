@@ -208,7 +208,11 @@
                 },
                 pullPosts: function() {
                     return  $firebaseArray(dashPost);
+                },
+                userPosts: function(){
+                    return $firebaseArray(userProfileBlogFeed);
                 }
+                
             };
             return userChoices;
         }]);
