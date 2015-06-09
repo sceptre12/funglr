@@ -24,6 +24,7 @@
 					$scope.randomObj = objlist;
 				});
 			});
+			
 
 
 

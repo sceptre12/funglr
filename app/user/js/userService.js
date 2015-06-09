@@ -113,12 +113,8 @@
                         });
 
                     };
-                    if (dashPost.hasChild(key)) {
-                        reblog(dashPost);
-                    }
-                    else {
-                        console.log("an error occured in reblog No child available");
-                    }
+                    reblog(dashPost);
+                    
                 },
                 unReblog: function(key) {
                     var unreblog = function(dashSomething) {
@@ -146,12 +142,7 @@
                             }
                         });
                     };
-                    if (dashPost.hasChild(key)) {
-                        unreblog(dashPost);
-                    }
-                    else {
-                        console.log("an error occured in unreblog No child available");
-                    }
+                    unreblog(dashPost);
                 },
                 follow: function(userid) {
                     var followingList = new Firebase(FUNGLR_DB + "/users/" + userid + "/followers");
