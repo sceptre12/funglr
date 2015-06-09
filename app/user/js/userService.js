@@ -207,10 +207,18 @@
                     }
                 },
                 pullPosts: function() {
-                    return  $firebaseArray(dashPost);
+                    var posts = {
+                        dpost: $firebaseArray(dashPost),
+                        ref:dashPost
+                    };
+                    return posts;
                 },
                 userPosts: function(){
-                    return $firebaseArray(userProfileBlogFeed);
+                    var posts ={
+                        upbf: $firebaseArray(userProfileBlogFeed),
+                        ref: userProfileBlogFeed
+                    };
+                    return posts;
                 }
                 
             };
