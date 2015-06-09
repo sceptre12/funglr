@@ -13,28 +13,8 @@
                 insertpost = "/dashboard/data/post",
                 dashPost = new Firebase(FUNGLR_DB + insertpost);
             console.log(currUser);
-            
-            var postEssentials = function(post, newpost) {
-                var postkey = newpost.key(),
-                    commentPosts = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/comments"),
-                    reblogged = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/reblogged"), // list of users that have reblogged
-                    liked = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/liked"); // list of people that have liked the post
-                if (post.comment) {
-                    commentPosts.push({
-                        'owner': currUser,
-                        'comment': post.comment,
-                        'date': Firebase.ServerValue.TIMESTAMP
-                    });
-                }
-                userProfileBlogFeed.push({
-                    "postid": postkey
-                });
-                reblogged.push({
-                    // This was created because a user shouldnt be able to reblog their own post even after
-                    // someone else has reblogged it.. Maby later but I don't want to duplicate data
-                    'userid': currUser
-                });
-            };
+
+
             var userChoices = {
                 whoOwnsPost: function(key) {
                     var determineOwner = function(dashSomething) {
@@ -50,6 +30,27 @@
                 },
                 insertPost: {
                     post: function(post) {
+                        var postEssentials = function(post, newpost) {
+                            var postkey = newpost.key(),
+                                commentPosts = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/comments"),
+                                reblogged = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/reblogged"), // list of users that have reblogged
+                                liked = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/liked"); // list of people that have liked the post
+                            if (post.comment) {
+                                commentPosts.push({
+                                    'owner': currUser,
+                                    'comment': post.comment,
+                                    'date': Firebase.ServerValue.TIMESTAMP
+                                });
+                            }
+                            userProfileBlogFeed.push({
+                                "postid": postkey
+                            });
+                            reblogged.push({
+                                // This was created because a user shouldnt be able to reblog their own post even after
+                                // someone else has reblogged it.. Maby later but I don't want to duplicate data
+                                'userid': currUser
+                            });
+                        };
                         var newPost = dashPost.push({
                             'title': post.title,
                             'subject': post.subject,
@@ -114,7 +115,7 @@
 
                     };
                     reblog(dashPost);
-                    
+
                 },
                 unReblog: function(key) {
                     var unreblog = function(dashSomething) {
@@ -145,29 +146,28 @@
                     unreblog(dashPost);
                 },
                 follow: function(userid) {
-                    var followingList = new Firebase(FUNGLR_DB + "/users/" + userid + "/followers");
-                    var followingBlogFeed = new Firebase(FUNGLR_DB + "/users/" + userid + "/blogfeed");
-                    // check if user is already following random person
-                    var found = false;
-                    var userArrList = $firebaseArray(userProfileBlogFeed);
-                    followingList.forEach(function(users) {
-                        if (users.val().userid === currUser) {
-                            found = true;
-                        }
-                    });
-                    followingBlogFeed.forEach(function(data) {
-                        userArrList.$add({
-                            'userid': data.val().postid
-                        });
-                    });
-                    if (!found) {
-                        followingList.push({
-                            'userid': currUser
-                        });
-                    }
+                    var follow = new Firebase(FUNGLR_DB + "/users/" + userid + "/followers");
+                    var allposts = $firebaseArray(dashPost); 
+                    // adds the userid of the user to the 'following' list
                     userProfileFollowing.push({
-                        'userid': userid
+                        'userid': userid,
+                        'date': Firebase.ServerValue.TIMESTAMP
                     });
+                    // adds the current user to the userid's followers list
+                    follow.push({
+                        'userid': currUser,
+                        'date': Firebase.ServerValue.TIMESTAMP
+                    });
+                    dashPost.on('value',function(data){
+                        for(var a = 0; a < allposts.length; a++){
+                            var currentPost = allposts.$get
+                        }
+                    })
+                    
+
+                },
+                unfollow: function(userid) {
+
                 },
                 likePost: function(key) {
                     var likedPost = function(dashSomething) {
@@ -175,12 +175,8 @@
                             'userid': currUser
                         });
                     };
-                    if (dashPost.hasChild(key)) {
-                        likedPost(dashPost);
-                    }
-                    else {
-                        console.log("an error occured in likedPost No child available");
-                    }
+
+                    likedPost(dashPost);
                 },
                 unLikePost: function(key) {
                     var likedPost = function(dashSomething) {
@@ -197,21 +193,28 @@
                         console.log("an error occured in unLikePost No child available");
                     }
                 },
-                pullPosts: function() {
+                fullDashList: function() {
                     var posts = {
                         dpost: $firebaseArray(dashPost),
-                        ref:dashPost
+                        ref: dashPost
                     };
                     return posts;
                 },
-                userPosts: function(){
-                    var posts ={
+                userBlog: function() {
+                    var posts = {
                         upbf: $firebaseArray(userProfileBlogFeed),
                         ref: userProfileBlogFeed
                     };
                     return posts;
+                },
+                userReblogged: function() {
+                    var posts = {
+                        reblog: $firebaseArray(userProfileReblog),
+                        ref: userProfileReblog
+                    };
+                    return posts;
                 }
-                
+
             };
             return userChoices;
         }]);
