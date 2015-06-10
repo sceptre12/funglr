@@ -1,13 +1,23 @@
-<div class="container">
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="postBlk" ng-repeat="post in randomObj ">
-                <h1>{{post.postid}}</h1>
-                <h3>{{post.title}}</h3>
-                <h5>{{post.subject}}</h5>
-                <hr>
-                <p>{{post.body}}</p>
-            </div>
+<ul class="postBlk">
+    <li ng-repeat="post in randomObj" >
+        <div class="textblock" ng-if="post.type === 'Text'">
+            <h1>{{post.title}}</h1>
+            <h3>{{post.subject}}</h3>
+            <p>{{post.body}}</p>
+            <p>Text post</p>
         </div>
-    </div>
-</div>
+        <div class="audioblock" ng-if="post.type === 'Audio'">
+            <h1>{{post.title}}</h1>
+            <h3>{{post.subject}}</h3>
+            <p>{{post.body}}</p>
+            <p>Comment post</p>
+        </div>
+        <div class="imageblock" ng-if="post.type === 'Image'">
+            <h1>{{post.title}}</h1>
+            <h3>{{post.subject}}</h3>
+            <p>{{post.body}}</p>
+            <p>Image post</p>
+        </div>
+        <hr>
+    </li>
+</ul>

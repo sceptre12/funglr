@@ -43,12 +43,14 @@
                                 });
                             }
                             userProfileBlogFeed.push({
-                                "postid": postkey
+                                "postid": postkey,
+                                'date': Firebase.ServerValue.TIMESTAMP
                             });
                             reblogged.push({
                                 // This was created because a user shouldnt be able to reblog their own post even after
                                 // someone else has reblogged it.. Maby later but I don't want to duplicate data
-                                'userid': currUser
+                                'userid': currUser,
+                                'date': Firebase.ServerValue.TIMESTAMP
                             });
                         };
                         var newPost = dashPost.push({
@@ -160,9 +162,16 @@
                     });
                     dashPost.on('value',function(data){
                         for(var a = 0; a < allposts.length; a++){
-                            var currentPost = allposts.$get
+                            var currentPost = allposts.$getRecord(allposts.$keyAt(a)).postid;
+                            var currentOwner = data.child(currentPost).val().owner;
+                            if(currentOwner === userid){
+                                userProfileBlogFeed.push({
+                                    'postid': allposts.$keyAt(a),
+                                    'date': Firebase.ServerValue.TIMESTAMP
+                                });
+                            }
                         }
-                    })
+                    });
                     
 
                 },
