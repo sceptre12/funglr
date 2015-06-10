@@ -1,5 +1,36 @@
 #usrdash{
     li{
         list-style-type: none;
+        width: 50%;
+        .textblock{
+            background: green;
+            @extend %poststyle;
+        }
+        .audioblock{
+            background: red;
+            @extend %poststyle;
+        }
+        .imageblock{
+            background: blue;
+            @extend %poststyle;
+        }
+        .postAttributes{
+            position: relative;
+            padding: 0 5% 1% 5%;
+            .col-sm-4{
+                display:flex;
+                justify-content: center;
+                ul{
+                    display: inline-flex;
+                    padding: 0;
+                    width: 100%;
+                    li{
+                        width:inherit;
+                        display:flex;
+                        justify-content: center;
+                    }
+                }
+            }
+        }
     }
 }

@@ -18,11 +18,13 @@
 					var objlist = [],
 						addToList = function(ListToSearch,info,list) {
 							var post = ListToSearch.$getRecord(ListToSearch.$keyAt(a)).postid;
-
-							var items = info.hasChild(post) ? info.child(post).val() : (function(error) {
-								console.log(post + " does not exist " + error);
-							})();
-							list.push(items);
+							var item = {};
+							
+							if(info.hasChild(post)){
+								item.content = info.child(post).val();
+								item.key = post;
+								list.push(item);
+							}
 						};
 					for (var a = 0; a < profileBlogFeed.length; a++) {
 						addToList(profileBlogFeed,data,objlist);
@@ -30,8 +32,13 @@
 					for (var a = 0; a < rebloglist.length; a++) {
 						addToList(rebloglist,data,objlist);
 					}
-					$scope.randomObj = objlist;
+					console.log(objlist);
+					$scope.postlist = objlist;
+					
 				});
 			});
+			$scope.owner = function(postkey){
+				return userFactory.whoOwnsPost(postkey);
+			}
 		}]);
 }(window));

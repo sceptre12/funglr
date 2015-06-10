@@ -17,24 +17,15 @@
 
             var userChoices = {
                 whoOwnsPost: function(key) {
-                    var determineOwner = function(dashSomething) {
-                        return dashSomething.child(key).child("owner");
-                    };
-                    if (dashPost.hasChild(key)) {
-                        determineOwner(dashPost);
-                    }
-                    else {
-                        console.log("No one owns post");
-                        return null;
-                    }
+                        return dashPost.child(key).child("owner");
                 },
                 insertPost: {
                     post: function(post) {
                         var postEssentials = function(post, newpost) {
                             var postkey = newpost.key(),
                                 commentPosts = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/comments"),
-                                reblogged = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/reblogged"), // list of users that have reblogged
-                                liked = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/liked"); // list of people that have liked the post
+                                reblogged = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/reblogged"); // list of users that have reblogged
+                                
                             if (post.comment) {
                                 commentPosts.push({
                                     'owner': currUser,
@@ -149,7 +140,7 @@
                 },
                 follow: function(userid) {
                     var follow = new Firebase(FUNGLR_DB + "/users/" + userid + "/followers");
-                    var allposts = $firebaseArray(dashPost); 
+                    var allposts = $firebaseArray(dashPost);
                     // adds the userid of the user to the 'following' list
                     userProfileFollowing.push({
                         'userid': userid,
@@ -160,11 +151,11 @@
                         'userid': currUser,
                         'date': Firebase.ServerValue.TIMESTAMP
                     });
-                    dashPost.on('value',function(data){
-                        for(var a = 0; a < allposts.length; a++){
+                    dashPost.on('value', function(data) {
+                        for (var a = 0; a < allposts.length; a++) {
                             var currentPost = allposts.$getRecord(allposts.$keyAt(a)).postid;
                             var currentOwner = data.child(currentPost).val().owner;
-                            if(currentOwner === userid){
+                            if (currentOwner === userid) {
                                 userProfileBlogFeed.push({
                                     'postid': allposts.$keyAt(a),
                                     'date': Firebase.ServerValue.TIMESTAMP
@@ -172,35 +163,26 @@
                             }
                         }
                     });
-                    
+
 
                 },
                 unfollow: function(userid) {
 
                 },
                 likePost: function(key) {
-                    var likedPost = function(dashSomething) {
-                        dashSomething.child(key).child('liked').push({
+                    var liked = new Firebase(FUNGLR_DB + insertpost + "/" + key + "/liked"); // list of people that have liked the post
+                        liked.push({
                             'userid': currUser
                         });
-                    };
-
-                    likedPost(dashPost);
                 },
                 unLikePost: function(key) {
-                    var likedPost = function(dashSomething) {
-                        dashSomething.child(key).child('liked').forEach(function(liked) {
+                    var liked = new Firebase(FUNGLR_DB + insertpost + "/" + key + "/liked"); // list of people that have liked the post
+                    
+                        liked.forEach(function(liked) {
                             if (liked.val().userid === currUser) {
                                 liked.key().remove();
                             }
                         });
-                    };
-                    if (dashPost.hasChild(key)) {
-                        likedPost(dashPost);
-                    }
-                    else {
-                        console.log("an error occured in unLikePost No child available");
-                    }
                 },
                 fullDashList: function() {
                     var posts = {

@@ -1,22 +1,90 @@
 <ul id="usrdash">
-    <li ng-repeat="post in randomObj" >
-        <div class="textblock" ng-if="post.type === 'Text'">
-            <h1>{{post.title}}</h1>
-            <h3>{{post.subject}}</h3>
-            <p>{{post.body}}</p>
+    <li ng-repeat="post in postlist" >
+        <div class="textblock" ng-if="post.content.type === 'Text'">
+            <h1>{{post.content.title}}</h1>
+            <h3>{{post.content.subject}}</h3>
+            <p>{{post.content.body}}</p>
             <p>Text post</p>
+            <div class="comments">
+                <div class="commentList">
+                    <ul>
+                        <li></li>
+                    </ul>
+                </div>
+                <form name="comments" class="form-inline" ng-submit="subComments(post.key)" no-validate>
+                    <div class="form-group">
+                        <input type="text" name="comment" ng-model="post.content.comment" />
+                    </div>
+                    
+                    <button class="btn btn-default" type="submit" ng-disabled="comments.$invalid">Submit</button>
+                </form>
+            </div>
+            <div class="postAttributes">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <p>{{notes}} notes</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p>Source {{owner(post.key)}}</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <ul>
+                            <li>Reblog</li>
+                            <li>Like</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="audioblock" ng-if="post.type === 'Audio'">
-            <h1>{{post.title}}</h1>
-            <h3>{{post.subject}}</h3>
-            <p>{{post.body}}</p>
+        <div class="audioblock" ng-if="post.content.type === 'Audio'">
+            <h1>{{post.content.title}}</h1>
+            <h3>{{post.content.subject}}</h3>
+            <p>{{post.content.body}}</p>
             <p>Comment post</p>
+            <div class="comments">
+                
+            </div>
+            <div class="postAttributes">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <p>{{notes}} notes</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p>Source {{owner}}</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <ul>
+                            <li>Reblog</li>
+                            <li>Like</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="imageblock" ng-if="post.type === 'Image'">
-            <h1>{{post.title}}</h1>
-            <h3>{{post.subject}}</h3>
-            <p>{{post.body}}</p>
+        <div class="imageblock" ng-if="post.content.type === 'Image'">
+            <h1>{{post.content.title}}</h1>
+            <h3>{{post.content.subject}}</h3>
+            <p>{{post.content.body}}</p>
             <p>Image post</p>
+            <div class="comments">
+                
+            </div>
+            <div class="postAttributes">
+                <div class="row">
+                    <div class="col-sm-4">
+                        <p>{{notes}} notes</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <p>Source {{owner}}</p>
+                    </div>
+                    <div class="col-sm-4">
+                        <ul>
+                            <li>Reblog</li>
+                            <li>Like</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
         <hr>
     </li>
