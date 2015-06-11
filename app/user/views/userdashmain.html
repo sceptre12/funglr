@@ -42,7 +42,18 @@
             <p>{{post.content.body}}</p>
             <p>Comment post</p>
             <div class="comments">
-                
+                <div class="commentList">
+                    <ul>
+                        <li></li>
+                    </ul>
+                </div>
+                <form name="comments" class="form-inline" ng-submit="subComments(post.key)" no-validate>
+                    <div class="form-group">
+                        <input type="text" name="comment" ng-model="post.content.comment" />
+                    </div>
+                    
+                    <button class="btn btn-default" type="submit" ng-disabled="comments.$invalid">Submit</button>
+                </form>
             </div>
             <div class="postAttributes">
                 <div class="row">
@@ -50,7 +61,7 @@
                         <p>{{notes}} notes</p>
                     </div>
                     <div class="col-sm-4">
-                        <p>Source {{owner}}</p>
+                        <p>Source {{post.owner}}</p>
                     </div>
                     <div class="col-sm-4">
                         <ul>
@@ -67,7 +78,18 @@
             <p>{{post.content.body}}</p>
             <p>Image post</p>
             <div class="comments">
-                
+                <div class="commentList">
+                    <ul>
+                        <li></li>
+                    </ul>
+                </div>
+                <form name="comments" class="form-inline" ng-submit="subComments(post.key)" no-validate>
+                    <div class="form-group">
+                        <input type="text" name="comment" ng-model="post.content.comment" />
+                    </div>
+                    
+                    <button class="btn btn-default" type="submit" ng-disabled="comments.$invalid">Submit</button>
+                </form>
             </div>
             <div class="postAttributes">
                 <div class="row">
@@ -75,7 +97,7 @@
                         <p>{{notes}} notes</p>
                     </div>
                     <div class="col-sm-4">
-                        <p>Source {{owner}}</p>
+                        <p>Source {{post.owner}}</p>
                     </div>
                     <div class="col-sm-4">
                         <ul>
