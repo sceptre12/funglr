@@ -16,8 +16,8 @@
 
 
             var userChoices = {
-                whoOwnsPost: function(key) {
-                        return dashPost.child(key).child("owner");
+                usersList: function() {
+                    return  users = new Firebase(FUNGLR_DB + '/users/');
                 },
                 insertPost: {
                     post: function(post) {
@@ -25,7 +25,7 @@
                             var postkey = newpost.key(),
                                 commentPosts = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/comments"),
                                 reblogged = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/reblogged"); // list of users that have reblogged
-                                
+
                             if (post.comment) {
                                 commentPosts.push({
                                     'owner': currUser,
@@ -171,18 +171,18 @@
                 },
                 likePost: function(key) {
                     var liked = new Firebase(FUNGLR_DB + insertpost + "/" + key + "/liked"); // list of people that have liked the post
-                        liked.push({
-                            'userid': currUser
-                        });
+                    liked.push({
+                        'userid': currUser
+                    });
                 },
                 unLikePost: function(key) {
                     var liked = new Firebase(FUNGLR_DB + insertpost + "/" + key + "/liked"); // list of people that have liked the post
-                    
-                        liked.forEach(function(liked) {
-                            if (liked.val().userid === currUser) {
-                                liked.key().remove();
-                            }
-                        });
+
+                    liked.forEach(function(liked) {
+                        if (liked.val().userid === currUser) {
+                            liked.key().remove();
+                        }
+                    });
                 },
                 fullDashList: function() {
                     var posts = {
