@@ -12,8 +12,7 @@
 				userref = userFactory.userBlog().ref,
 				userslist = userFactory.usersList();
 
-			// value is an event that reports all changes that happens 
-			// underneath this ref
+			// value is an event that reports all changes that happens underneath this ref
 			dashref.on('value', function(data) {
 				profileBlogFeed.$loaded().then(function() {
 					userslist.on('value', function(usrlist) {
@@ -21,7 +20,7 @@
 							addToList = function(ListToSearch, info, list, listofusers) {
 								var post = ListToSearch.$getRecord(ListToSearch.$keyAt(a)).postid;
 								var item = {};
-
+								var commentsobj = userFactory.getComments(post);
 								if (info.hasChild(post)) {
 									item.content = info.child(post).val();
 									item.key = post;
@@ -41,5 +40,12 @@
 					})
 				});
 			});
+			$scope.commentPost = {
+				comment: ""
+			}
+			$scope.subComments = function(key){
+				userFactory.addComments(key,$scope.commentPost);
+				$scope.commentPost.comment = '';
+			}
 		}]);
 }(window));

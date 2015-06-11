@@ -17,7 +17,7 @@
 
             var userChoices = {
                 usersList: function() {
-                    return  users = new Firebase(FUNGLR_DB + '/users/');
+                    return users = new Firebase(FUNGLR_DB + '/users/');
                 },
                 insertPost: {
                     post: function(post) {
@@ -65,14 +65,21 @@
 
                     }
                 },
-                addComments: {
-                    post: function(key, post) {
-                        dashPost.child(key).child('comments').push({
-                            'owner': currUser,
-                            'comment': post.comment,
-                            'date': Firebase.ServerValue.TIMESTAMP
-                        });
+                addComments: function(key, post) {
+                    var commentPosts = new Firebase(FUNGLR_DB + insertpost + "/" + key + "/comments");
+                    commentPosts.push({
+                        'owner': currUser,
+                        'comment': post.comment,
+                        'date': Firebase.ServerValue.TIMESTAMP
+                    });
+                },
+                getComments: function(key){
+                    var reference = new Firebase(FUNGLR_DB + insertpost + "/" + key + "/comments")
+                    var comments = {
+                        list: $firebaseArray(reference),
+                        ref: reference
                     }
+                    return comments;
                 },
                 deleteComments: function(postkey, commentkey) {
                     // Make sure the outside function takes care of determining its the owner

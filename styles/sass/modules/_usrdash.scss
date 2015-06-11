@@ -16,10 +16,10 @@
         }
         .postAttributes{
             position: relative;
-            padding: 0 5% 1% 5%;
             .col-sm-4{
                 display:flex;
                 justify-content: center;
+                font-size: 10px;
                 ul{
                     display: inline-flex;
                     padding: 0;
@@ -28,8 +28,42 @@
                         width:inherit;
                         display:flex;
                         justify-content: center;
+                        
                     }
                 }
+            }
+        }
+        .comments{
+            form{
+                text-align: center;
+            }
+            .commentList{
+                ul{
+                    padding: 0;
+                    li{
+                        width: 100%;
+                        .row{
+                            height: 37px;
+                            .panel{
+                                margin-bottom: 5px;
+                                .panel-body{
+                                    padding: 5px;
+                                }
+                            }
+                            .col-sm-2{
+                                height: inherit;
+                                display: flex;
+                                justify-content: center;
+                                align-items: center;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .panel-heading{
+            h1,h5{
+                text-align: center;
             }
         }
     }
