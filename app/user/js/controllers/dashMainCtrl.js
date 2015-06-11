@@ -20,14 +20,18 @@
 							addToList = function(ListToSearch, info, list, listofusers) {
 								var post = ListToSearch.$getRecord(ListToSearch.$keyAt(a)).postid;
 								var item = {};
-								var commentsobj = userFactory.getComments(post);
-								if (info.hasChild(post)) {
-									item.content = info.child(post).val();
-									item.key = post;
-									var pOwner = listofusers.child(item.content.owner).val();
-									item.owner = pOwner.firstname + " " + pOwner.lastname;
-									list.push(item);
-								}
+								var commentsobj = userFactory.getComments(post).list;
+								console.log(commentsobj)
+								commentsobj.$loaded().then(function() {
+									if (info.hasChild(post)) {
+										item.content = info.child(post).val();
+										item.key = post;
+										item.comments = commentsobj;
+										var pOwner = listofusers.child(item.content.owner).val();
+										item.owner = pOwner.firstname + " " + pOwner.lastname;
+										list.push(item);
+									}
+								});
 							};
 						for (var a = 0; a < profileBlogFeed.length; a++) {
 							addToList(profileBlogFeed, data, objlist, usrlist);
@@ -43,8 +47,8 @@
 			$scope.commentPost = {
 				comment: ""
 			}
-			$scope.subComments = function(key){
-				userFactory.addComments(key,$scope.commentPost);
+			$scope.subComments = function(key) {
+				userFactory.addComments(key, $scope.commentPost);
 				$scope.commentPost.comment = '';
 			}
 		}]);
