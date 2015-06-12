@@ -180,10 +180,14 @@
                 },
                 unLikePost: function(key) {
                     var liked = new Firebase(FUNGLR_DB + insertpost + "/" + key + "/liked"); // list of people that have liked the post
-
-                    liked.forEach(function(liked) {
-                        if (liked.val().userid === currUser) {
-                            liked.key().remove();
+                    var likedlist = $firebaseArray(liked);
+                    likedlist.$loaded().then(function(){
+                        for(var a = 0; a < likedlist.length; a++){
+                            var record = likedlist.$getRecord(likedlist.$keyAt(a));
+                            console.log(record)
+                            if(record.userid === currUser){
+                                liked.child(record.$id).remove();
+                            }
                         }
                     });
                 },

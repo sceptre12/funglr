@@ -11,10 +11,7 @@
 				profileBlogFeed = userFactory.userBlog().upbf,
 				userref = userFactory.userBlog().ref,
 				userslist = userFactory.usersList();
-			$scope.postobj = {
-				postlist: "",
-				comments: ""
-			}
+			
 			// value is an event that reports all changes that happens underneath this ref
 			dashref.on('value', function(data) {
 				profileBlogFeed.$loaded().then(function() {
@@ -42,7 +39,7 @@
 							addToList(rebloglist, data, objlist, usrlist);
 						}
 						console.log(objlist);
-						$scope.postobj.postlist = objlist;
+						$scope.postlist = objlist;
 					});
 				});
 				$scope.isCurrentUser = function(postkey) {
@@ -50,17 +47,30 @@
 					return postval.owner === $rootScope.currentUser.$id;
 				};
 			});
-			
-			$scope.subComments = function(key) {
-				userFactory.addComments(key, $scope.postobj.comments);
-				$scope.postobj.comments = '';
+			$scope.item ="";
+			$scope.subComments = function(key,response) {
+				console.log(response);
+				userFactory.addComments(key, response);
+				response = '';
 			};
 			$scope.deleteComment = function(pkey, ckey) {
 				userFactory.deleteComments(pkey, ckey);
 			};
 			$scope.deletePost = function(postkey){
 				userFactory.removePost(postkey);
-			}
-
+			};
+			$scope.liked = function(key,clicked){
+				console.log(clicked)
+				if(!clicked){
+					console.log('false')
+					userFactory.likePost(key);
+				}else{
+					console.log('true')
+					userFactory.unLikePost(key);
+				}
+			};
+			$scope.reblogged = function(key,clicked){
+				console.log(clicked)
+			};
 		}]);
 }(window));
