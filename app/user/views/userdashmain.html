@@ -1,8 +1,10 @@
 <ul id="usrdash">
-    <li ng-repeat="post in postlist">
+    <li ng-repeat="post in postobj.postlist">
         <div class="textblock" ng-if="post.content.type === 'Text'">
             <div class="panel panel-default">
                 <div class="panel-heading">
+                    <!--deletions of post should only be made from the owner of the post-->
+                    <button class="glyphicon glyphicon-remove" ng-click="deletePost(post.key)" ng-show="isCurrentUser(post.key)"></button>
                     <h1>{{post.content.title}}</h1>
                     <hr>
                     <h5>{{post.content.subject}}</h5>
@@ -27,7 +29,7 @@
                                             </div>
                                         </div>
                                         <div class="col-sm-2">
-                                            <span class="glyphicon glyphicon-remove" ng-click=""></span>
+                                            <button class="glyphicon glyphicon-remove" ng-click="deleteComment(post.key,com.$id)"></button>
                                         </div>
                                     </div>
                                 </li>
@@ -38,7 +40,7 @@
                                 <form name="comments" class="form-inline" ng-submit="subComments(post.key)" no-validate>
                                     <label>Comments</label>
                                     <div class="form-group">
-                                        <input type="text" name="comment" ng-model="commentPost.comment" placeholder="Write a reply..." />
+                                        <input type="text" name="comment" ng-model="postobj.comments" placeholder="Write a reply..." />
                                     </div>
 
                                     <button class="btn btn-default" type="submit" ng-disabled="comments.$invalid">Submit</button>
@@ -68,18 +70,36 @@
         <div class="audioblock" ng-if="post.content.type === 'Audio'">
             <div class="panel panel-default">
                 <div class="panel-heading">
+                    <!--deletions of post should only be made from the owner of the post-->
+                    <button class="glyphicon glyphicon-remove" ng-click="deletePost(post.key)" ng-show="isCurrentUser(post.key)"></button>
                     <h1>{{post.content.title}}</h1>
                     <hr>
                     <h5>{{post.content.subject}}</h5>
                 </div>
                 <div class="panel-body">
-                    <p>{{post.content.audio}}</p>
+                    <p>{{post.content.body}}</p>
                 </div>
                 <div class="panel-footer">
                     <div class="comments">
                         <div class="commentList">
                             <ul>
-                                <li></li>
+                                <li ng-repeat="com in post.comments">
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                            {{com.owner}}
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <div class="panel panel-default">
+                                                <div class="panel-body">
+                                                    {{com.comment}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button class="glyphicon glyphicon-remove" ng-click="deleteComment(post.key,com.$id)"></button>
+                                        </div>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                         <div class="panel panel-default">
@@ -87,7 +107,7 @@
                                 <form name="comments" class="form-inline" ng-submit="subComments(post.key)" no-validate>
                                     <label>Comments</label>
                                     <div class="form-group">
-                                        <input type="text" name="comment" ng-model="commentPost.comment" placeholder="Write a reply..." />
+                                        <input type="text" name="comment" ng-model="postobj.comments" placeholder="Write a reply..." />
                                     </div>
 
                                     <button class="btn btn-default" type="submit" ng-disabled="comments.$invalid">Submit</button>
@@ -117,18 +137,36 @@
         <div class="imageblock" ng-if="post.content.type === 'Image'">
             <div class="panel panel-default">
                 <div class="panel-heading">
+                    <!--deletions of post should only be made from the owner of the post-->
+                    <button class="glyphicon glyphicon-remove" ng-click="deletePost(post.key)" ng-show="isCurrentUser(post.key)"></button>
                     <h1>{{post.content.title}}</h1>
                     <hr>
                     <h5>{{post.content.subject}}</h5>
                 </div>
                 <div class="panel-body">
-                    <p>{{post.content.image}}</p>
+                    <p>{{post.content.body}}</p>
                 </div>
                 <div class="panel-footer">
                     <div class="comments">
                         <div class="commentList">
                             <ul>
-                                <li></li>
+                                <li ng-repeat="com in post.comments">
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                            {{com.owner}}
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <div class="panel panel-default">
+                                                <div class="panel-body">
+                                                    {{com.comment}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button class="glyphicon glyphicon-remove" ng-click="deleteComment(post.key,com.$id)"></button>
+                                        </div>
+                                    </div>
+                                </li>
                             </ul>
                         </div>
                         <div class="panel panel-default">
@@ -136,7 +174,7 @@
                                 <form name="comments" class="form-inline" ng-submit="subComments(post.key)" no-validate>
                                     <label>Comments</label>
                                     <div class="form-group">
-                                        <input type="text" name="comment" ng-model="commentPost.comment" placeholder="Write a reply..." />
+                                        <input type="text" name="comment" ng-model="postobj.comments" placeholder="Write a reply..." />
                                     </div>
 
                                     <button class="btn btn-default" type="submit" ng-disabled="comments.$invalid">Submit</button>

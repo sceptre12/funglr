@@ -17,7 +17,7 @@
 
             var userChoices = {
                 usersList: function() {
-                    return users = new Firebase(FUNGLR_DB + '/users/');
+                    return new Firebase(FUNGLR_DB + '/users/');
                 },
                 insertPost: {
                     post: function(post) {
@@ -58,22 +58,28 @@
                     }
                 },
                 removePost: function(postkey) {
-                    // I will need to get the list of people who have reblogged this 
-                    // I will need to get the list of people that are currently following this user
-                    // delete this id from their lists
-                    if (currUser) {
+                    // only the owner of the post can delete the post
 
-                    }
+                    var usrbloglist = $firebaseArray(userProfileBlogFeed);
+                    usrbloglist.$loaded().then(function() {
+                        for (var a = 0; a < usrbloglist.length; a++) {
+                            var value = usrbloglist.$getRecord(usrbloglist.$keyAt(a));
+                            if (value.postid === postkey) {
+                                usrbloglist.$remove(value);
+                            }
+                        }
+                        dashPost.child(postkey).remove();
+                    });
                 },
                 addComments: function(key, post) {
                     var commentPosts = new Firebase(FUNGLR_DB + insertpost + "/" + key + "/comments");
                     commentPosts.push({
                         'owner': currUser,
-                        'comment': post.comment,
+                        'comment': post,
                         'date': Firebase.ServerValue.TIMESTAMP
                     });
                 },
-                getComments: function(key){
+                getComments: function(key) {
                     var reference = new Firebase(FUNGLR_DB + insertpost + "/" + key + "/comments")
                     var comments = {
                         list: $firebaseArray(reference),
@@ -82,17 +88,7 @@
                     return comments;
                 },
                 deleteComments: function(postkey, commentkey) {
-                    // Make sure the outside function takes care of determining its the owner
-                    // of the comment or blog doing the removal of the comments
-                    var removeComment = function(dashSomething) {
-                        dashSomething.child(postkey).child('comments').child(commentkey).remove();
-                    };
-                    if (dashPost.hasChild(key)) {
-                        removeComment(dashPost);
-                    }
-                    else {
-                        console.log("No post to delete");
-                    }
+                    dashPost.child(postkey).child('comments').child(commentkey).remove();
                 },
                 reblogPost: function(key) {
                     var reblog = function(dashSomething) {
