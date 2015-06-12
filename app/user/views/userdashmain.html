@@ -56,13 +56,13 @@
                             <div class="col-sm-4">
                                 <p>Source {{post.owner}} </p>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-4" >
                                 <ul >
-                                    <li ng-init="rclick = false">
-                                        <button class="btn glyphicon glyphicon-link" ng-click=" rclick = !rclick; reblogged(post.key,rclick)" ng-class="{clicked:rclick}"></button>
+                                    <li >
+                                        <button class="btn glyphicon glyphicon-link" ng-click="reblogged(post.key,rclick)" ng-class="{clicked:!rclick}"></button>
                                     </li>
-                                    <li ng-init="lclick = false">
-                                        <button class="btn glyphicon glyphicon-heart" ng-click="lclick = !lclick; liked(post.key,lclick)" ng-class="{clicked:lclick}"></button>
+                                    <li>
+                                        <button class="btn glyphicon glyphicon-heart" ng-click="liked(post.key,lclick)" ng-class="{clicked:!lclick}"></button>
                                     </li>
                                 </ul>
                             </div>

@@ -23,8 +23,7 @@
                     post: function(post) {
                         var postEssentials = function(post, newpost) {
                             var postkey = newpost.key(),
-                                commentPosts = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/comments"),
-                                reblogged = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/reblogged"); // list of users that have reblogged
+                                commentPosts = new Firebase(FUNGLR_DB + insertpost + "/" + postkey + "/comments");
 
                             if (post.comment) {
                                 commentPosts.push({
@@ -35,12 +34,6 @@
                             }
                             userProfileBlogFeed.push({
                                 "postid": postkey,
-                                'date': Firebase.ServerValue.TIMESTAMP
-                            });
-                            reblogged.push({
-                                // This was created because a user shouldnt be able to reblog their own post even after
-                                // someone else has reblogged it.. Maby later but I don't want to duplicate data
-                                'userid': currUser,
                                 'date': Firebase.ServerValue.TIMESTAMP
                             });
                         };
@@ -61,14 +54,23 @@
                     // only the owner of the post can delete the post
 
                     var usrbloglist = $firebaseArray(userProfileBlogFeed);
+                    var usrebloglist = $firebaseArray(userProfileReblog);
                     usrbloglist.$loaded().then(function() {
-                        for (var a = 0; a < usrbloglist.length; a++) {
-                            var value = usrbloglist.$getRecord(usrbloglist.$keyAt(a));
-                            if (value.postid === postkey) {
-                                usrbloglist.$remove(value);
+                        usrebloglist.$loaded().then(function() {
+                            for (var a = 0; a < usrbloglist.length; a++) {
+                                var value = usrbloglist.$getRecord(usrbloglist.$keyAt(a));
+                                if (value.postid === postkey) {
+                                    usrbloglist.$remove(value);
+                                }
                             }
-                        }
-                        dashPost.child(postkey).remove();
+                            for(var a = 0; a < usrebloglist.length; a++){
+                                var postid = usrebloglist.$getRecord(usrebloglist.$keyAt(a)).postid;
+                                if(postid === postkey){
+                                    usrebloglist.$remove(a);
+                                }
+                            }
+                            dashPost.child(postkey).remove();
+                        });
                     });
                 },
                 addComments: function(key, post) {
@@ -91,55 +93,44 @@
                     dashPost.child(postkey).child('comments').child(commentkey).remove();
                 },
                 reblogPost: function(key) {
-                    var reblog = function(dashSomething) {
-                        /**
+                    /**
 							So when a user reblogs a posts the post's Id gets stored under the users list
 							of reblogged blogs, the post also gets the id of the user that reblogged that
 							post, and finally the data now gets added to that users blog feed
                 		*/
-                        userProfileReblog.push({
-                            'userid': key
-                        });
-                        dashSomething.child(key).child('reblogged').push({
-                            'userid': currUser,
-                            'date': Firebase.ServerValue.TIMESTAMP
-                        });
-                        userProfileBlogFeed.push({
-                            "postid": key,
-                            'date': Firebase.ServerValue.TIMESTAMP
-                        });
-
-                    };
-                    reblog(dashPost);
-
+                    userProfileReblog.push({
+                        'postid': key
+                    });
+                    dashPost.child(key).child('reblogged').push({
+                        'userid': currUser,
+                        'date': Firebase.ServerValue.TIMESTAMP
+                    });
                 },
                 unReblog: function(key) {
-                    var unreblog = function(dashSomething) {
-                        /**
+
+                    /**
 							So when a user reblogs a posts the post's Id gets stored under the users list
 							of reblogged blogs, the post also gets the id of the user that reblogged that
 							post, and finally the data now gets added to that users blog feed
                 		*/
-                        userProfileReblog.forEach(function(childData) {
-                            if (childData.userid.val() === key) {
-                                childData.key().remove();
-                                return true;
+                    var reblogList = $firebaseArray(userProfileReblog);
+                    var postslist = $firebaseArray(dashPost.child(key).child('reblogged'));
+                    reblogList.$loaded().then(function() {
+                        postslist.$loaded().then(function() {
+                            for (var a = 0; a < reblogList.length; a++) {
+                                var postid = reblogList.$getRecord(reblogList.$keyAt(a)).postid;
+                                if (postid === key) {
+                                    reblogList.$remove(a);
+                                }
+                            }
+                            for (var a = 0; a < postslist.length; a++) {
+                                var userid = postslist.$getRecord(postslist.$keyAt(a)).userid;
+                                if (userid === currUser) {
+                                    postslist.$remove(a);
+                                }
                             }
                         });
-                        userProfileBlogFeed.forEach(function(childData) {
-                            if (childData.postid.val() === key) {
-                                childData.key().remove();
-                                return true;
-                            }
-                        });
-                        dashSomething.child(key).child('reblogged').forEach(function(childData) {
-                            if (childData.userid.val() === currUser) {
-                                childData.key().remove();
-                                return true;
-                            }
-                        });
-                    };
-                    unreblog(dashPost);
+                    });
                 },
                 follow: function(userid) {
                     var follow = new Firebase(FUNGLR_DB + "/users/" + userid + "/followers");
@@ -181,11 +172,11 @@
                 unLikePost: function(key) {
                     var liked = new Firebase(FUNGLR_DB + insertpost + "/" + key + "/liked"); // list of people that have liked the post
                     var likedlist = $firebaseArray(liked);
-                    likedlist.$loaded().then(function(){
-                        for(var a = 0; a < likedlist.length; a++){
+                    likedlist.$loaded().then(function() {
+                        for (var a = 0; a < likedlist.length; a++) {
                             var record = likedlist.$getRecord(likedlist.$keyAt(a));
                             console.log(record)
-                            if(record.userid === currUser){
+                            if (record.userid === currUser) {
                                 liked.child(record.$id).remove();
                             }
                         }
