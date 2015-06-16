@@ -2,12 +2,23 @@
     var angular = window.angular;
     angular.module('funglr', ['ui.bootstrap', 'ui.router', 'ngAnimate', 'anim-in-out', 'funglr.user', 'funglr.dash', 'funglr.auth', 'firebase'])
         .run(["$rootScope", '$state', function($rootScope, $state) {
-            // $rootScope.$on("$stateChangeError", function(event, toState, toParams, fromState, fromParams, error) {
+            // $rootScope.$on("$stateChangeError", ['event','toState','toParams','fromState','fromParams','error',function(event, toState, toParams, fromState, fromParams, error) {
+            //     console.log(error)
             //     if (error === "AUTH_REQUIRED") {
+            //         console.log(error)
             //         $rootScope.RouteChangeError = error;
             //         $state.go('funglr.login');
             //     }
-            // });
+            // }]);
+            $rootScope.$on("$stateChangeStart",function(event, toState, toParams, fromState, fromParams){
+                $rootScope.toState = toState;
+                $rootScope.toParams = toParams;
+                console.log(event);
+                console.log(toState);
+                console.log(toParams);
+                console.log(fromState);
+                console.log(fromParams);
+            });
         }])
         .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {
             $urlRouterProvider.otherwise('/home');
@@ -54,12 +65,13 @@
                 .state('funglr.user', {
                     abstract: true,
                     url: '/user',
-                    templateUrl: 'app/user/profile.html'
-                    // resolve: {
-                    //     currentAuth: function(AuthFactory) {
-                    //         return AuthFactory.requireAuth;
-                    //     }
-                    // }
+                    templateUrl: 'app/user/profile.html',
+                    resolve: {
+                        authorize: [ 'AuthFactory', function(AuthFactory){
+                            console.log('Resolve working ')
+                            return AuthFactory.requireAuth();
+                        }]
+                    }
                 })
                 .state('funglr.user.mainscreen', {
                     abstract: true,

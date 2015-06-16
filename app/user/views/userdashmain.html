@@ -1,6 +1,6 @@
 <ul id="usrdash">
-    <li ng-repeat="post in postlist">
-        <div class="textblock" ng-if="post.content.type === 'Text'">
+    <li ng-repeat="post in postlist" ng-init="lclick = true; rclick = true">
+        <div class="textblock" ng-if="post.content.type === 'Text'" >
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <!--deletions of post should only be made from the owner of the post-->
@@ -59,10 +59,10 @@
                             <div class="col-sm-4" >
                                 <ul >
                                     <li >
-                                        <button class="btn glyphicon glyphicon-link" ng-click="reblogged(post.key,rclick)" ng-class="{clicked:!rclick}"></button>
+                                        <button class="btn glyphicon glyphicon-link" ng-click="reblogged(post.key,rclick);rclick = !rclick;" ng-class="{clicked:!rclick}"></button>
                                     </li>
                                     <li>
-                                        <button class="btn glyphicon glyphicon-heart" ng-click="liked(post.key,lclick)" ng-class="{clicked:!lclick}"></button>
+                                        <button class="btn glyphicon glyphicon-heart" ng-click=" liked(post.key,lclick);lclick = !lclick" ng-class="{clicked:!lclick}"></button>
                                     </li>
                                 </ul>
                             </div>

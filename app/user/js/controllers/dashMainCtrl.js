@@ -63,25 +63,25 @@
 			};
 			$scope.liked = function(key, clicked) {
 				if (clicked) {
-					$scope.lclick = false;
+					// $scope.lclick = false;
 					userFactory.likePost(key);
 				}
 				else {
-					$scope.lclick = true;
+					// $scope.lclick = true;
 					userFactory.unLikePost(key);
 				}
 			};
 			$scope.reblogged = function(key, clicked) {
 				if (clicked) {
-					$scope.rclick = false;
+					// $scope.rclick = false;
 					userFactory.reblogPost(key);
 				}
 				else {
-					$scope.rclick = true;
+					// $scope.rclick = true;
 					userFactory.unReblog(key);
 				}
 			};
-			$scope.lclick = true; // Liked clicked
-			$scope.rclick = true; // reblogged clicked
+			// $scope.lclick = true; // Liked clicked
+			// $scope.rclick = true; // reblogged clicked
 		}]);
 }(window));
