@@ -39,7 +39,6 @@
 							for (var a = 0; a < rebloglist.length; a++) {
 								addToList(rebloglist, data, objlist, usrlist);
 							}
-							console.log(objlist);
 							$scope.postlist = objlist;
 						});
 					});
@@ -61,27 +60,33 @@
 			$scope.deletePost = function(postkey) {
 				userFactory.removePost(postkey);
 			};
-			$scope.liked = function(key, clicked) {
-				if (clicked) {
-					// $scope.lclick = false;
+			$scope.liked = function(key, clicked,post) {
+				console.log(clicked)
+				console.log(post)
+				if (!clicked) {
+					console.log('liked');
+					// $scope.like = !$scope.like;
 					userFactory.likePost(key);
 				}
 				else {
-					// $scope.lclick = true;
+					console.log('unlike')
+					// $scope.like = !$scope.like;
 					userFactory.unLikePost(key);
 				}
 			};
 			$scope.reblogged = function(key, clicked) {
-				if (clicked) {
-					// $scope.rclick = false;
+				console.log(clicked);
+				
+				if (!clicked) {
+					// $scope.reblog = !$scope.reblog;
 					userFactory.reblogPost(key);
 				}
 				else {
-					// $scope.rclick = true;
+					// $scope.reblog = !$scope.reblog;
 					userFactory.unReblog(key);
 				}
 			};
-			// $scope.lclick = true; // Liked clicked
-			// $scope.rclick = true; // reblogged clicked
+			
+			
 		}]);
 }(window));

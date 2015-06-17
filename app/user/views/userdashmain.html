@@ -1,6 +1,6 @@
 <ul id="usrdash">
-    <li ng-repeat="post in postlist" ng-init="lclick = true; rclick = true">
-        <div class="textblock" ng-if="post.content.type === 'Text'" >
+    <li ng-repeat="post in postlist" >
+        <div class="textblock" ng-if="post.content.type === 'Text'">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <!--deletions of post should only be made from the owner of the post-->
@@ -16,23 +16,44 @@
                     <div class="comments">
                         <div class="commentList">
                             <ul>
-                                <li ng-repeat="com in post.comments">
+                                <li ng-repeat="first in post.comments | limitTo: 1">
                                     <div class="row">
                                         <div class="col-sm-2">
-                                            {{com.owner}}
+                                            {{first.owner}}
                                         </div>
                                         <div class="col-sm-8">
                                             <div class="panel panel-default">
                                                 <div class="panel-body">
-                                                    {{com.comment}}
+                                                    {{first.comment}}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-2">
-                                            <button class="btn glyphicon glyphicon-remove" ng-click="deleteComment(post.key,com.$id)"></button>
+                                            <button class="btn glyphicon glyphicon-remove" ng-click="deleteComment(post.key,first.$id)"></button>
                                         </div>
                                     </div>
                                 </li>
+                                <accordion>
+                                    <accordion-group heading="More Comments" >
+                                        <li ng-repeat="com in post.comments" ng-if="$index >=1" >
+                                            <div class="row">
+                                                <div class="col-sm-2">
+                                                    {{com.owner}}
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-body">
+                                                            {{com.comment}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <button class="btn glyphicon glyphicon-remove" ng-click="deleteComment(post.key,com.$id)"></button>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </accordion-group>
+                                </accordion>
                             </ul>
                         </div>
                         <div class="panel panel-default">
@@ -56,13 +77,13 @@
                             <div class="col-sm-4">
                                 <p>Source {{post.owner}} </p>
                             </div>
-                            <div class="col-sm-4" >
+                            <div class="col-sm-4">
                                 <ul >
-                                    <li >
-                                        <button class="btn glyphicon glyphicon-link" ng-click="reblogged(post.key,rclick);rclick = !rclick;" ng-class="{clicked:!rclick}"></button>
+                                    <li ng-init="post.reblog = false">
+                                        <button class="btn glyphicon glyphicon-link" ng-click="reblogged(post.key,post.reblog); post.reblog = !post.reblog" ng-class="{clicked:post.reblog}"></button>
                                     </li>
-                                    <li>
-                                        <button class="btn glyphicon glyphicon-heart" ng-click=" liked(post.key,lclick);lclick = !lclick" ng-class="{clicked:!lclick}"></button>
+                                    <li ng-init="post.like = false">
+                                        <button class="btn glyphicon glyphicon-heart" ng-click="liked(post.key,post.like, post); post.like= !post.like" ng-class="{clicked:post.like}"></button>
                                     </li>
                                 </ul>
                             </div>

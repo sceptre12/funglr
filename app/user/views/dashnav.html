@@ -3,7 +3,8 @@
      <hr>
      <ul>
           <li ng-repeat="navlist in nav">
-               <button class="btn" ng-click="clicked(navlist.name)">{{navlist.name}}</button>
+               <button class="btn glyphicon"
+               ng-class="{'glyphicon-pencil': navlist.name === 'Text', 'glyphicon-picture': navlist.name === 'Image', 'glyphicon-headphones': navlist.name === 'Audio'}" ng-click="clicked(navlist.name)"></button>
           </li>
      </ul>
 </div>

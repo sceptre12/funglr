@@ -13,11 +13,11 @@
             $rootScope.$on("$stateChangeStart",function(event, toState, toParams, fromState, fromParams){
                 $rootScope.toState = toState;
                 $rootScope.toParams = toParams;
-                console.log(event);
-                console.log(toState);
-                console.log(toParams);
-                console.log(fromState);
-                console.log(fromParams);
+                // console.log(event);
+                // console.log(toState);
+                // console.log(toParams);
+                // console.log(fromState);
+                // console.log(fromParams);
             });
         }])
         .config(['$stateProvider', '$urlRouterProvider', function($stateProvider, $urlRouterProvider) {

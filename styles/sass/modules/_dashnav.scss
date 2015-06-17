@@ -4,7 +4,11 @@
         display: inline-flex;
         padding: 0;
         li{
-             padding: 10%;
+            margin-left: 20%;
+            margin-right: 20%;
+            button{
+                font-size: 5vw;
+            }
         }
     }
 }
