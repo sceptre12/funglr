@@ -83,7 +83,7 @@
                                         <button class="btn glyphicon glyphicon-link" ng-click="reblogged(post.key,post.reblog); post.reblog = !post.reblog" ng-class="{clicked:post.reblog}"></button>
                                     </li>
                                     <li ng-init="post.like = false">
-                                        <button class="btn glyphicon glyphicon-heart" ng-click="liked(post.key,post.like, post); post.like= !post.like" ng-class="{clicked:post.like}"></button>
+                                        <button class="btn glyphicon glyphicon-heart" ng-click="liked(post.key,post.like); post.like= !post.like" ng-class="{clicked:post.like}"></button>
                                     </li>
                                 </ul>
                             </div>
@@ -159,73 +159,98 @@
         <!--        </div>-->
         <!--    </div>-->
         <!--</div>-->
-        <!--<div class="imageblock" ng-if="post.content.type === 'Image'">-->
-        <!--    <div class="panel panel-default">-->
-        <!--        <div class="panel-heading">-->
-        <!--deletions of post should only be made from the owner of the post-->
-        <!--            <button class="glyphicon glyphicon-remove" ng-click="deletePost(post.key)" ng-show="isCurrentUser(post.key)"></button>-->
-        <!--            <h1>{{post.content.title}}</h1>-->
-        <!--            <hr>-->
-        <!--            <h5>{{post.content.subject}}</h5>-->
-        <!--        </div>-->
-        <!--        <div class="panel-body">-->
-        <!--            <p>{{post.content.body}}</p>-->
-        <!--        </div>-->
-        <!--        <div class="panel-footer">-->
-        <!--            <div class="comments">-->
-        <!--                <div class="commentList">-->
-        <!--                    <ul>-->
-        <!--                        <li ng-repeat="com in post.comments">-->
-        <!--                            <div class="row">-->
-        <!--                                <div class="col-sm-2">-->
-        <!--                                    {{com.owner}}-->
-        <!--                                </div>-->
-        <!--                                <div class="col-sm-8">-->
-        <!--                                    <div class="panel panel-default">-->
-        <!--                                        <div class="panel-body">-->
-        <!--                                            {{com.comment}}-->
-        <!--                                        </div>-->
-        <!--                                    </div>-->
-        <!--                                </div>-->
-        <!--                                <div class="col-sm-2">-->
-        <!--                                    <button class="glyphicon glyphicon-remove" ng-click="deleteComment(post.key,com.$id)"></button>-->
-        <!--                                </div>-->
-        <!--                            </div>-->
-        <!--                        </li>-->
-        <!--                    </ul>-->
-        <!--                </div>-->
-        <!--                <div class="panel panel-default">-->
-        <!--                    <div class="panel-body">-->
-        <!--                        <form name="comments" class="form-inline" ng-submit="subComments(post.key)" no-validate>-->
-        <!--                            <label>Comments</label>-->
-        <!--                            <div class="form-group">-->
-        <!--                                <input type="text" name="comment" ng-model="postobj.comments" placeholder="Write a reply..." />-->
-        <!--                            </div>-->
+        <div class="imageblock" ng-if="post.content.type === 'Image'">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <!--deletions of post should only be made from the owner of the post-->
+                    <button class="btn glyphicon glyphicon-remove" ng-click="deletePost(post.key)" ng-show="isCurrentUser(post.key)"></button>
+                    <h1>{{post.content.title}}</h1>
+                    <hr>
+                    <h5>{{post.content.subject}}</h5>
+                </div>
+                <div class="panel-body">
+                    <img ng-src="{{createImage(post.content.image)}}" class="img-responsive"></img>
+                </div>
+                <div class="panel-footer">
+                    <div class="comments">
+                        <div class="commentList">
+                            <ul>
+                                <li ng-repeat="first in post.comments | limitTo: 1">
+                                    <div class="row">
+                                        <div class="col-sm-2">
+                                            {{first.owner}}
+                                        </div>
+                                        <div class="col-sm-8">
+                                            <div class="panel panel-default">
+                                                <div class="panel-body">
+                                                    {{first.comment}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-2">
+                                            <button class="btn glyphicon glyphicon-remove" ng-click="deleteComment(post.key,first.$id)"></button>
+                                        </div>
+                                    </div>
+                                </li>
+                                <accordion>
+                                    <accordion-group heading="More Comments" >
+                                        <li ng-repeat="com in post.comments" ng-if="$index >=1" >
+                                            <div class="row">
+                                                <div class="col-sm-2">
+                                                    {{com.owner}}
+                                                </div>
+                                                <div class="col-sm-8">
+                                                    <div class="panel panel-default">
+                                                        <div class="panel-body">
+                                                            {{com.comment}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-2">
+                                                    <button class="btn glyphicon glyphicon-remove" ng-click="deleteComment(post.key,com.$id)"></button>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    </accordion-group>
+                                </accordion>
+                            </ul>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-body">
+                                <form name="comments" class="form-inline" no-validate>
+                                    <label>Comments</label>
+                                    <div class="form-group">
+                                        <input type="text" name="comment" ng-model="item" placeholder="Write a reply..." />
+                                    </div>
 
-        <!--                            <button class="btn btn-default" type="submit" ng-disabled="comments.$invalid">Submit</button>-->
-        <!--                        </form>-->
-        <!--                    </div>-->
-        <!--                </div>-->
-        <!--            </div>-->
-        <!--            <div class="postAttributes">-->
-        <!--                <div class="row">-->
-        <!--                    <div class="col-sm-4">-->
-        <!--                        <p>{{notes}} notes</p>-->
-        <!--                    </div>-->
-        <!--                    <div class="col-sm-4">-->
-        <!--                        <p>Source {{post.owner}} </p>-->
-        <!--                    </div>-->
-        <!--                    <div class="col-sm-4">-->
-        <!--                        <ul>-->
-        <!--                            <li>Reblog</li>-->
-        <!--                            <li>Like</li>-->
-        <!--                        </ul>-->
-        <!--                    </div>-->
-        <!--                </div>-->
-        <!--            </div>-->
-        <!--        </div>-->
-        <!--    </div>-->
-        <!--</div>-->
+                                    <button class="btn btn-default" type="submit" ng-disabled="comments.$invalid" ng-click="subComments(post.key,item)">Submit</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="postAttributes">
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <p>{{notes}} notes</p>
+                            </div>
+                            <div class="col-sm-4">
+                                <p>Source {{post.owner}} </p>
+                            </div>
+                            <div class="col-sm-4">
+                                <ul >
+                                    <li ng-init="post.reblog = false">
+                                        <button class="btn glyphicon glyphicon-link" ng-click="reblogged(post.key,post.reblog); post.reblog = !post.reblog" ng-class="{clicked:post.reblog}"></button>
+                                    </li>
+                                    <li ng-init="post.like = false">
+                                        <button class="btn glyphicon glyphicon-heart" ng-click="liked(post.key,post.like); post.like= !post.like" ng-class="{clicked:post.like}"></button>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
         <hr>
     </li>
 </ul>

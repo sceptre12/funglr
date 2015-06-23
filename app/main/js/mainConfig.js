@@ -1,6 +1,6 @@
 (function(window) {
     var angular = window.angular;
-    angular.module('funglr', ['ui.bootstrap', 'ui.router', 'ngAnimate', 'anim-in-out', 'funglr.user', 'funglr.dash', 'funglr.auth', 'firebase'])
+    angular.module('funglr', ['ui.bootstrap', 'ui.router', 'ngAnimate', 'anim-in-out', 'funglr.user', 'funglr.dash', 'funglr.auth', 'firebase', 'naif.base64','base64'])
         .run(["$rootScope", '$state', function($rootScope, $state) {
             // $rootScope.$on("$stateChangeError", ['event','toState','toParams','fromState','fromParams','error',function(event, toState, toParams, fromState, fromParams, error) {
             //     console.log(error)

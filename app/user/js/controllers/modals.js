@@ -9,17 +9,22 @@
                 'title': '',
                 'subject': '',
                 'body': '',
-                'image': '',
+                'image': {},
                 'audio': '',
                 'owner': $rootScope.currentUser.regUser
             };
 
-
+            // modalinstance.close can be used to send information which can be
+            // picked up by the modalinstance.result.then(function(){})
             $scope.insertPost = function() {
                 userFactory.insertPost.post($scope.post);
                 $modalInstance.close(); 
             };
-
+            $scope.insertImage = function(){
+                userFactory.insertPost.post($scope.post);
+                
+                $modalInstance.close(); 
+            };
             $scope.cancel = function() {
                 $modalInstance.dismiss('cancel');
             };

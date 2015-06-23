@@ -60,9 +60,8 @@
 			$scope.deletePost = function(postkey) {
 				userFactory.removePost(postkey);
 			};
-			$scope.liked = function(key, clicked,post) {
+			$scope.liked = function(key, clicked) {
 				console.log(clicked)
-				console.log(post)
 				if (!clicked) {
 					console.log('liked');
 					// $scope.like = !$scope.like;
@@ -86,6 +85,9 @@
 					userFactory.unReblog(key);
 				}
 			};
+			$scope.createImage = function(imageObj){
+				return "data:" + imageObj.filetype + ";base64," + imageObj.base64;
+			}
 			
 			
 		}]);
