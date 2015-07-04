@@ -165,11 +165,12 @@
                     <!--deletions of post should only be made from the owner of the post-->
                     <button class="btn glyphicon glyphicon-remove" ng-click="deletePost(post.key)" ng-show="isCurrentUser(post.key)"></button>
                     <h1>{{post.content.title}}</h1>
-                    <hr>
-                    <h5>{{post.content.subject}}</h5>
+                    
                 </div>
                 <div class="panel-body">
                     <img ng-src="{{createImage(post.content.image)}}" class="img-responsive"></img>
+                    <hr>
+                    <h5>{{post.content.subject}}</h5>
                 </div>
                 <div class="panel-footer">
                     <div class="comments">

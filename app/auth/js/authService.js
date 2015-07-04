@@ -1,23 +1,30 @@
 (function(window) {
     var angular = window.angular;
     angular.module('funglr.auth')
-        .factory('AuthFactory', ['FUNGLR_DB','$firebaseAuth','$rootScope','$firebaseObject',function(FUNGLR_DB,$firebaseAuth,$rootScope,$firebaseObject) {
+        .factory('AuthFactory', ['FUNGLR_DB','$firebaseAuth','$rootScope','$firebaseObject','$state', function(FUNGLR_DB,$firebaseAuth,$rootScope,$firebaseObject, $state) {
             var ref = new Firebase(FUNGLR_DB);
             var auth = $firebaseAuth(ref);
-            auth.$onAuth(function(userData){
+            ref.onAuth(function(userData){
                if(userData){
-                   // if user is logged in
-                   var ref = new Firebase(FUNGLR_DB + "/users/" + userData.uid);
-                   $rootScope.currentUser = $firebaseObject(ref);                   
+                   var userdata = new Firebase(FUNGLR_DB + "/users/" + userData.uid);
+                   $rootScope.currentUser = $firebaseObject(userdata);                   
                }else{
                    $rootScope.currentUser = "";
                }
             });
             var myObj ={
                 login   : function(user){
-                    return auth.$authWithPassword({
-                        email       : user.email,
-                        password    : user.password
+                    return ref.authWithPassword({
+                        "email": user.email,
+                        "password": user.password
+                    }, function(error, authdata){
+                        if(error){
+                            console.log(error)
+                            $rootScope.loginError = "LOGIN FAILED";
+                        }else{
+                            console.log(authdata);
+                            $state.go('funglr.user.mainscreen.landing');
+                        }
                     });
                 },
                 register: function(user){

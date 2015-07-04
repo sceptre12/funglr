@@ -22,7 +22,6 @@
             };
             $scope.insertImage = function(){
                 userFactory.insertPost.post($scope.post);
-                
                 $modalInstance.close(); 
             };
             $scope.cancel = function() {

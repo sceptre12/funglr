@@ -5,10 +5,8 @@
                 <h2 style="color:red">{{RouteChangeError}}</h2>
             </div>
             <h1>Login Here </h1>
-            <div ng-show="login.error">
-                <!--i need to fix this error message -->
-                <h3>Sorry This Error Occurred</h3>
-                <p>{{login.error}}</p>
+            <div ng-show="loginError">
+                <p>{{loginError}}</p>
             </div>
             <form name="usrlogin"  ng-submit="login.login()" novalidate>
                 <div class="form-group" >

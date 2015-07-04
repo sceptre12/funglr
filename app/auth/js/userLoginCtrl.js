@@ -8,13 +8,7 @@
 			password: ""
 		};
 		userlogin.login = function(){
-			AuthFactory.login(userlogin.user)
-			.then(function(){
-				$state.go('funglr.user.mainscreen.landing');
-			}).catch(function(error){
-				userlogin.error = error;
-				console.log(error);
-			});
+			AuthFactory.login(userlogin.user);
 		};
 	}]);
 }(window));
