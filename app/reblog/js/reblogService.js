@@ -9,6 +9,7 @@
 			}
 
 			return {
+				// Rejects with code: unauthenticated (no session), not-found (original post deleted), forbidden (own post), exists (already reblogged).
 				reblogPost: function (postId) {
 					return currentUser().then(function (session) {
 						return DataStore.get('posts', postId).then(function (post) {

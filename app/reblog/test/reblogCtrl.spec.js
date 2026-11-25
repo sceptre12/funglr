@@ -1,5 +1,5 @@
 describe('reblogConfig and reblogCtrl', function () {
-	var states, $rootScope, $controller, DataStore, ReblogService;
+	var states, $rootScope, $q, $controller, DataStore, ReblogService;
 
 	beforeAll(function () {
 		return import('../js/reblogModule.js')
@@ -21,8 +21,9 @@ describe('reblogConfig and reblogCtrl', function () {
 			});
 		});
 		angular.mock.module('funglr.reblog');
-		angular.mock.inject(function (_$rootScope_, _$controller_, _DataStore_, _ReblogService_) {
+		angular.mock.inject(function (_$rootScope_, _$q_, _$controller_, _DataStore_, _ReblogService_) {
 			$rootScope = _$rootScope_;
+			$q = _$q_;
 			$controller = _$controller_;
 			DataStore = _DataStore_;
 			ReblogService = _ReblogService_;
@@ -136,14 +137,44 @@ describe('reblogConfig and reblogCtrl', function () {
 		expect(scope.error).toBe('');
 	});
 
+	it('shows the post-gone message when reblogging a deleted post', function () {
+		var p = makePost('a');
+		signIn('u1');
+		var scope = makeCtrl();
+		settle(DataStore.remove('posts', p));
+		settle(scope.toggle(scope.posts[0]));
+		expect(scope.error).toBe('This post no longer exists');
+		expect(scope.posts[0].reblogged).toBe(false);
+	});
+
+	it('refreshes the row after a stale exists rejection', function () {
+		var p = makePost('a');
+		signIn('u1');
+		var scope = makeCtrl();
+		settle(ReblogService.reblogPost(p));
+		expect(scope.posts[0].reblogged).toBe(false);
+		settle(scope.toggle(scope.posts[0]));
+		expect(scope.posts[0].reblogged).toBe(true);
+		expect(scope.posts[0].reblogCount).toBe(1);
+	});
+
+	it('refreshes the row after a stale not-found rejection', function () {
+		makePost('a');
+		signIn('u1');
+		var scope = makeCtrl();
+		scope.posts[0].reblogged = true;
+		scope.posts[0].reblogCount = 3;
+		settle(scope.toggle(scope.posts[0]));
+		expect(scope.posts[0].reblogged).toBe(false);
+		expect(scope.posts[0].reblogCount).toBe(0);
+	});
+
 	it('shows the generic message for an unknown rejection code', function () {
 		makePost('a');
 		signIn('u1');
 		var scope = makeCtrl();
-		vi.spyOn(ReblogService, 'reblogPost').mockReturnValue(Promise.reject({ code: 'boom' }));
-		// native promise: flush via a real tick
-		return scope.toggle(scope.posts[0]).then(function () {
-			expect(scope.error).toBe('Could not update the reblog');
-		});
+		vi.spyOn(ReblogService, 'reblogPost').mockReturnValue($q.reject({ code: 'boom' }));
+		settle(scope.toggle(scope.posts[0]));
+		expect(scope.error).toBe('Could not update the reblog');
 	});
 });
