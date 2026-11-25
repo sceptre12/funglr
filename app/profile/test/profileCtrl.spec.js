@@ -119,4 +119,29 @@ describe('profileCtrl', function () {
 		$rootScope.$digest();
 		expect(scope.message).toBe('The profile could not be loaded.');
 	});
+
+	it('asks to sign in when the session exists but the user record is gone', function () {
+		DataStore.create('session', { id: 'current', userId: 'ghost', email: 'g@h.i', name: 'Ghost' });
+		$rootScope.$digest();
+		var ProfileService, err;
+		angular.mock.inject(function (_ProfileService_) { ProfileService = _ProfileService_; });
+		ProfileService.getProfile().then(null, function (e) { err = e; });
+		$rootScope.$digest();
+		expect(err).toEqual({ code: 'unauthenticated', message: 'Sign in to see your profile.' });
+		run();
+		expect(scope.user).toBe(null);
+		expect(scope.message).toBe('Sign in to see your profile.');
+		expect(scope.loaded).toBe(true);
+	});
+
+	it('lists image and audio posts with their titles without crashing', function () {
+		seedUser();
+		DataStore.create('posts', { id: 'pi', authorId: 'u1', type: 'image', title: 'a picture', mediaData: 'data:image/png;base64,AAAA', reblogOf: null });
+		DataStore.create('posts', { id: 'pa', authorId: 'u1', type: 'audio', title: 'a sound', mediaData: 'data:audio/mp3;base64,AAAA', reblogOf: null });
+		$rootScope.$digest();
+		run();
+		expect(scope.message).toBe('');
+		expect(scope.posts.map(function (p) { return p.title; }).sort()).toEqual(['a picture', 'a sound']);
+		expect(scope.posts.map(function (p) { return p.type; }).sort()).toEqual(['audio', 'image']);
+	});
 });
