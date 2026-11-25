@@ -1,0 +1,11 @@
+<!-- Body rendering is for text posts only; media display for image/audio posts is owned by the image-posts and audio-posts rows (st4/st5). -->
+<div class="profile-page">
+    <h2 ng-if="user">{{user.name}}</h2>
+    <p class="profile-empty" ng-if="loaded && message">{{message}}</p>
+    <ul class="profile-posts" ng-if="posts.length">
+        <li ng-repeat="post in posts">
+            <h4>{{post.title}}</h4>
+            <p ng-if="post.type === 'text'">{{post.body}}</p>
+        </li>
+    </ul>
+</div>
