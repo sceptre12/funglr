@@ -11,20 +11,23 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
             <ul class="nav navbar-nav" >
-                <li ng-hide="currentUser" ng-repeat="navLinks in nav.navListTab" ui-sref-active="active">
+                <li ng-hide="nav.user" ng-repeat="navLinks in nav.navListTab" ui-sref-active="active">
                     <a ui-sref="{{navLinks.link}}">{{navLinks.name}}</a>
                 </li>
-                <li ng-show="currentUser" ng-repeat="navLinks in nav.userNavTab" ui-sref-active="active" >
+                <li ng-show="nav.user" ng-repeat="navLinks in nav.userNavTab" ui-sref-active="active" >
                     <a ui-sref="{{navLinks.link}}">{{navLinks.name}}</a>
                 </li>
             </ul>
             <ul class="nav navbar-nav navbar-right" >
-                <li ng-hide="currentUser" ng-repeat="navLogin in nav.navLoginTab" >
+                <li ng-hide="nav.user" ng-repeat="navLogin in nav.navLoginTab" >
                     <a ui-sref="{{navLogin.link}}">
                         {{navLogin.name}}
                     </a>
                 </li>
-                <li ng-show="currentUser">
+                <li ng-show="nav.user">
+                    <span class="navbar-text nav-user-name">{{nav.user.name}}</span>
+                </li>
+                <li ng-show="nav.user">
                     <a ng-click="nav.logout()">Log Out</a>
                 </li>
             </ul>
