@@ -1,21 +1,33 @@
 (function (window) {
 	var angular = window.angular;
 	angular.module('funglr.image-posts')
-		.controller('imagePostCtrl', ['$scope', 'PostService', '$modalInstance', 'clicked', function ($scope, PostService, $modalInstance, clicked) {
+		.controller('imagePostCtrl', ['$scope', 'ImagePostService', '$modalInstance', 'clicked', function ($scope, ImagePostService, $modalInstance, clicked) {
 			$scope.typeOfPost = clicked;
-			$scope.post = {
-				'type': 'image',
-				'title': '',
-				'subject': '',
-				'body': '',
-				'image': {},
-				'audio': ''
+			$scope.post = { title: '', body: '' };
+			$scope.file = null;
+			$scope.error = '';
+			$scope.busy = false;
+
+			$scope.setFile = function (file) {
+				$scope.file = file || null;
+				$scope.error = '';
 			};
 
-			$scope.insertPost = function () {
-				PostService.createPost($scope.post).then(function () { $modalInstance.close(); });
+			$scope.insertImage = function () {
+				if ($scope.busy) {
+					return;
+				}
+				$scope.error = '';
+				$scope.busy = true;
+				return ImagePostService.createImagePost($scope.post, $scope.file).then(function () {
+					$scope.busy = false;
+					$modalInstance.close();
+				}, function (err) {
+					$scope.busy = false;
+					$scope.error = (err && err.message) || 'the image post could not be created';
+				});
 			};
-			$scope.insertImage = $scope.insertPost;
+			$scope.insertPost = $scope.insertImage;
 			$scope.cancel = function () {
 				$modalInstance.dismiss('cancel');
 			};
