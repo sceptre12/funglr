@@ -26,12 +26,16 @@
 			var raw = localStorage.getItem(key);
 			if (raw === null || raw === undefined) { return null; }
 			var parsed = null;
-			try { parsed = JSON.parse(raw); } catch (err) { parsed = err && null; }
+			try { parsed = JSON.parse(raw); } catch (err) { throw fail('invalid', 'corrupt data in ' + key); }
 			return parsed;
 		}
 
 		function writeRaw(key, value) {
 			localStorage.setItem(key, JSON.stringify(value));
+		}
+
+		function has(map, id) {
+			return Object.prototype.hasOwnProperty.call(map, id);
 		}
 
 		function readMap(collection) {
@@ -56,7 +60,8 @@
 			if (isSession(collection)) {
 				rec = id === SESSION_ID ? readRaw(PREFIX + 'session') : null;
 			} else {
-				rec = readMap(collection)[id];
+				var map0 = readMap(collection);
+				rec = has(map0, id) ? map0[id] : null;
 			}
 			if (!rec) { throw fail('not-found', collection + '/' + id + ' not found'); }
 			return rec;
@@ -92,7 +97,7 @@
 			}
 			var map = readMap(collection);
 			if (rec.id === undefined || rec.id === null) { rec.id = newId(); }
-			if (Object.prototype.hasOwnProperty.call(map, rec.id)) {
+			if (has(map, rec.id)) {
 				throw fail('exists', collection + '/' + rec.id + ' exists');
 			}
 			rec.createdAt = new Date().toISOString();

@@ -2,12 +2,14 @@
 	'use strict';
 
 	angular.module('funglr.data').factory('DataStore', ['$q', 'LocalAdapter', function ($q, adapter) {
+		var CODES = ['not-found', 'exists', 'invalid', 'unauthenticated', 'forbidden'];
+
 		function run(fn) {
 			var deferred = $q.defer();
 			try {
 				deferred.resolve(fn());
 			} catch (e) {
-				if (e && e.code) {
+				if (e && CODES.indexOf(e.code) !== -1) {
 					deferred.reject({ code: e.code, message: e.message });
 				} else {
 					deferred.reject({ code: 'invalid', message: String(e && e.message || e) });

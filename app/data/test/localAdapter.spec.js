@@ -78,4 +78,20 @@ describe('LocalAdapter', function () {
 		var bad = caught(function () { adapter.create('session', { id: 'x' }); });
 		expect(bad && bad.code).toBe('invalid');
 	});
+
+	it('get/update/remove reject not-found for inherited property names', function () {
+		adapter.create('users', { id: 'a' });
+		['constructor', 'toString', '__proto__'].forEach(function (id) {
+			expect((caught(function () { adapter.get('users', id); }) || {}).code).toBe('not-found');
+			expect((caught(function () { adapter.update('users', id, { name: 'x' }); }) || {}).code).toBe('not-found');
+			expect((caught(function () { adapter.remove('users', id); }) || {}).code).toBe('not-found');
+		});
+	});
+
+	it('corrupt JSON in storage throws invalid and is not overwritten', function () {
+		localStorage.setItem('funglr:users', '{not json');
+		expect((caught(function () { adapter.list('users'); }) || {}).code).toBe('invalid');
+		expect((caught(function () { adapter.create('users', { id: 'a' }); }) || {}).code).toBe('invalid');
+		expect(localStorage.getItem('funglr:users')).toBe('{not json');
+	});
 });

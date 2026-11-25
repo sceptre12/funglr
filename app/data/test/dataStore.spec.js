@@ -88,4 +88,22 @@ describe('DataStore', function () {
 		expect(localStorage.getItem('funglr:session')).toBeNull();
 		expect(localStorage.getItem('other')).toBe('keep');
 	});
+
+	it('maps a numeric QuotaExceededError code to invalid', function () {
+		var spy = vi.spyOn(Storage.prototype, 'setItem').mockImplementation(function () {
+			var err = new Error('quota');
+			err.name = 'QuotaExceededError';
+			err.code = 22;
+			throw err;
+		});
+		var r = settle(DataStore.create('posts', { id: 'p1' }));
+		expect(spy).toHaveBeenCalled();
+		spy.mockRestore();
+		expect(r.err.code).toBe('invalid');
+	});
+
+	it('surfaces corrupt stored JSON as invalid', function () {
+		localStorage.setItem('funglr:posts', '{oops');
+		expect(settle(DataStore.list('posts')).err.code).toBe('invalid');
+	});
 });

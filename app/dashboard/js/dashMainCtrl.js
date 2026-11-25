@@ -26,8 +26,8 @@
 				$scope.subComments = function (key, response) {
 					CommentService.addComment(key, response).then(load);
 				};
-				$scope.deleteComment = function (pkey, ckey) {
-					CommentService.removeComment(ckey).then(load);
+				$scope.deleteComment = function (pkey, commentId) {
+					CommentService.removeComment(commentId).then(load);
 				};
 				$scope.deletePost = function (postkey) {
 					PostService.removePost(postkey).then(load);
@@ -37,9 +37,6 @@
 				};
 				$scope.reblogged = function (key, clicked) {
 					(clicked ? ReblogService.unReblog(key) : ReblogService.reblogPost(key)).then(load);
-				};
-				$scope.createImage = function (imageObj) {
-					return 'data:' + imageObj.filetype + ';base64,' + imageObj.base64;
 				};
 			}]);
 }(window));

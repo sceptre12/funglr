@@ -1,6 +1,6 @@
 <ul id="usrdash">
     <li ng-repeat="post in postlist" >
-        <div class="textblock" ng-if="post.content.type === 'Text'">
+        <div class="textblock" ng-if="post.content.type === 'text'">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <!--deletions of post should only be made from the owner of the post-->
@@ -19,17 +19,17 @@
                                 <li ng-repeat="first in post.comments | limitTo: 1">
                                     <div class="row">
                                         <div class="col-sm-2">
-                                            {{first.owner}}
+                                            {{first.authorId}}
                                         </div>
                                         <div class="col-sm-8">
                                             <div class="panel panel-default">
                                                 <div class="panel-body">
-                                                    {{first.comment}}
+                                                    {{first.body}}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-2">
-                                            <button class="btn glyphicon glyphicon-remove" ng-click="deleteComment(post.key,first.$id)"></button>
+                                            <button class="btn glyphicon glyphicon-remove" ng-click="deleteComment(post.key,first.id)"></button>
                                         </div>
                                     </div>
                                 </li>
@@ -38,17 +38,17 @@
                                         <li ng-repeat="com in post.comments" ng-if="$index >=1" >
                                             <div class="row">
                                                 <div class="col-sm-2">
-                                                    {{com.owner}}
+                                                    {{com.authorId}}
                                                 </div>
                                                 <div class="col-sm-8">
                                                     <div class="panel panel-default">
                                                         <div class="panel-body">
-                                                            {{com.comment}}
+                                                            {{com.body}}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <button class="btn glyphicon glyphicon-remove" ng-click="deleteComment(post.key,com.$id)"></button>
+                                                    <button class="btn glyphicon glyphicon-remove" ng-click="deleteComment(post.key,com.id)"></button>
                                                 </div>
                                             </div>
                                         </li>
@@ -92,7 +92,7 @@
                 </div>
             </div>
         </div>
-        <!--<div class="audioblock" ng-if="post.content.type === 'Audio'">-->
+        <!--<div class="audioblock" ng-if="post.content.type === 'audio'">-->
         <!--    <div class="panel panel-default">-->
         <!--        <div class="panel-heading">-->
         <!--deletions of post should only be made from the owner of the post-->
@@ -159,7 +159,7 @@
         <!--        </div>-->
         <!--    </div>-->
         <!--</div>-->
-        <div class="imageblock" ng-if="post.content.type === 'Image'">
+        <div class="imageblock" ng-if="post.content.type === 'image'">
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <!--deletions of post should only be made from the owner of the post-->
@@ -168,7 +168,7 @@
                     
                 </div>
                 <div class="panel-body">
-                    <img ng-src="{{createImage(post.content.image)}}" class="img-responsive"></img>
+                    <img ng-src="{{post.content.mediaData}}" class="img-responsive"></img>
                     <hr>
                     <h5>{{post.content.subject}}</h5>
                 </div>
@@ -179,17 +179,17 @@
                                 <li ng-repeat="first in post.comments | limitTo: 1">
                                     <div class="row">
                                         <div class="col-sm-2">
-                                            {{first.owner}}
+                                            {{first.authorId}}
                                         </div>
                                         <div class="col-sm-8">
                                             <div class="panel panel-default">
                                                 <div class="panel-body">
-                                                    {{first.comment}}
+                                                    {{first.body}}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-sm-2">
-                                            <button class="btn glyphicon glyphicon-remove" ng-click="deleteComment(post.key,first.$id)"></button>
+                                            <button class="btn glyphicon glyphicon-remove" ng-click="deleteComment(post.key,first.id)"></button>
                                         </div>
                                     </div>
                                 </li>
@@ -198,17 +198,17 @@
                                         <li ng-repeat="com in post.comments" ng-if="$index >=1" >
                                             <div class="row">
                                                 <div class="col-sm-2">
-                                                    {{com.owner}}
+                                                    {{com.authorId}}
                                                 </div>
                                                 <div class="col-sm-8">
                                                     <div class="panel panel-default">
                                                         <div class="panel-body">
-                                                            {{com.comment}}
+                                                            {{com.body}}
                                                         </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-2">
-                                                    <button class="btn glyphicon glyphicon-remove" ng-click="deleteComment(post.key,com.$id)"></button>
+                                                    <button class="btn glyphicon glyphicon-remove" ng-click="deleteComment(post.key,com.id)"></button>
                                                 </div>
                                             </div>
                                         </li>
