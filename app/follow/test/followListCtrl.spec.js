@@ -136,4 +136,30 @@ describe('followListCtrl', function () {
 		expect(scope.error).toBe('Something went wrong');
 		FollowService.follow = original;
 	});
+
+	it('a non-auth load failure shows its own message, not the sign-in text', function () {
+		seed();
+		var $q;
+		angular.mock.inject(function (_$q_) { $q = _$q_; });
+		var original = DataStore.list;
+		DataStore.list = function () { return $q.reject({ code: 'invalid', message: 'Storage is corrupt.' }); };
+		var scope = make();
+		DataStore.list = original;
+		expect(scope.error).toBe('Storage is corrupt.');
+		expect(scope.error).not.toBe('Sign in to follow people');
+		expect(scope.users).toEqual([]);
+		expect(scope.following).toEqual({});
+	});
+
+	it('unfollowing a follow that is already gone treats it as unfollowed with no error', function () {
+		seed();
+		settle(FollowService.follow('u2'));
+		var scope = make();
+		expect(scope.following.u2).toBe(true);
+		// stale view: the follow was removed elsewhere
+		settle(DataStore.remove('follows', 'u1:u2'));
+		settle(scope.toggle(scope.users[0]));
+		expect(scope.following.u2).toBe(false);
+		expect(scope.error).toBe('');
+	});
 });

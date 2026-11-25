@@ -20,21 +20,26 @@
 				}).then(function (follows) {
 					$scope.following = {};
 					follows.forEach(function (f) { $scope.following[f.followeeId] = true; });
-				}, function () {
+				}, function (rejection) {
 					$scope.users = [];
 					$scope.following = {};
-					$scope.error = 'Sign in to follow people';
+					$scope.error = rejection && rejection.code === 'unauthenticated' ? 'Sign in to follow people' : message(rejection);
 				});
 			};
 
 			$scope.toggle = function (user) {
 				$scope.error = '';
-				var op = $scope.following[user.id] ? FollowService.unfollow(user.id) : FollowService.follow(user.id);
+				var wasFollowing = !!$scope.following[user.id];
+				var op = wasFollowing ? FollowService.unfollow(user.id) : FollowService.follow(user.id);
 				return op.then(function () {
 					$scope.following[user.id] = !$scope.following[user.id];
 				}, function (rejection) {
 					if (rejection && rejection.code === 'exists') {
 						$scope.following[user.id] = true;
+						return;
+					}
+					if (wasFollowing && rejection && rejection.code === 'not-found') {
+						$scope.following[user.id] = false;
 						return;
 					}
 					$scope.error = message(rejection);
