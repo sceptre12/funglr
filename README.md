@@ -1,8 +1,18 @@
-#Funglr (Learning)
+# Funglr (Learning)
 
-This is a blog I'm making to mimic tumblr. I feel that website is complex enough yet simple enough to emulate on a small scale
+A blog app that mimics Tumblr on a small scale. AngularJS 1.3, built with Node 22 (no Ruby, no gulp).
 
-So to get everything set up 
-node install 
-bower install
-gulp install
+## Setup
+Node v22.13.0, then:
+
+    npm ci
+
+`index.html` still references vendor files under `bower_components/`, which `npm ci` does not install; they are handled outside this setup.
+
+## Scripts
+- `npm run build` bundles scripts (`app/**/js/**/*.js`), templates (`app/**/*.html`) and styles (`styles/sass/main.scss`) into `build/`
+- `npm run serve` builds, then serves `index.html` and `build/` on http://127.0.0.1:38100
+- `npm run lint` lints the app and the build files with eslint
+- `npm test` runs every `app/**/test/*.spec.js` with vitest (jsdom)
+
+CI (`.github/workflows/ci.yml`) runs `npm ci`, `npm run lint`, `npm test` and `npm run build` on push and pull request to `master`.
