@@ -3,12 +3,11 @@
         <div class="col-sm-offset-3 col-sm-6 ">
             <h1>Sign Up Here</h1>
             <div ng-show="signUp.error">
-                <!--i need to fix this error message -->
                 <h3>Sorry This Error Occurred</h3>
-                <p>{{signUp.error}}</p>
+                <p class="text-danger">{{signUp.error}}</p>
             </div>
             <!-- <div class="formblck" ng-if="!signUp.register.actions.isSuccess()"> -->
-                <form novalidate name="userRegistration" ng-submit="signUp.register()">
+                <form novalidate name="userRegistration" ng-submit="signUp.register(userRegistration)">
                     <div class="form-group">
                         <label for="fname">First Name</label>
                         <input type="text" class="form-control" id="fname" placeholder="Enter Firstname" 
