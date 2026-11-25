@@ -75,4 +75,65 @@ describe('followListCtrl', function () {
 		settle(scope.toggle(scope.users[0]));
 		expect(scope.error).toBe('Not signed in.');
 	});
+
+	it('a second follow of an already followed user keeps the following state and stores no duplicate', function () {
+		seed();
+		var scope = make();
+		settle(scope.toggle(scope.users[0]));
+		expect(scope.following.u2).toBe(true);
+		// stale view: the store holds the follow but the button state was lost
+		scope.following = {};
+		settle(scope.toggle(scope.users[0]));
+		expect(scope.following.u2).toBe(true);
+		expect(scope.error).toBe('');
+		expect(settle(FollowService.listFollowing('u1')).ok.length).toBe(1);
+	});
+
+	it('load clears a previous error and resets stale following marks on success', function () {
+		seed();
+		var scope = make();
+		scope.error = 'old';
+		scope.following = { stale: true };
+		settle(scope.load());
+		expect(scope.error).toBe('');
+		expect(scope.following).toEqual({});
+	});
+
+	it('load failure clears users and following', function () {
+		seed();
+		settle(FollowService.follow('u2'));
+		var scope = make();
+		expect(scope.users.length).toBe(1);
+		expect(scope.following.u2).toBe(true);
+		settle(DataStore.remove('session', 'current'));
+		settle(scope.load());
+		expect(scope.users).toEqual([]);
+		expect(scope.following).toEqual({});
+		expect(scope.error).toBe('Sign in to follow people');
+	});
+
+	it('toggle clears a previous error before acting', function () {
+		seed();
+		var scope = make();
+		scope.error = 'old';
+		settle(scope.toggle(scope.users[0]));
+		expect(scope.error).toBe('');
+	});
+
+	it('a rejection without a message falls back to the default text; an undefined rejection does not throw', function () {
+		seed();
+		var scope = make();
+		var user = scope.users[0];
+		var $q;
+		angular.mock.inject(function (_$q_) { $q = _$q_; });
+		var original = FollowService.follow;
+		FollowService.follow = function () { return $q.reject({ code: 'x' }); };
+		settle(scope.toggle(user));
+		expect(scope.error).toBe('Something went wrong');
+		FollowService.follow = function () { return $q.reject(undefined); };
+		scope.error = '';
+		settle(scope.toggle(user));
+		expect(scope.error).toBe('Something went wrong');
+		FollowService.follow = original;
+	});
 });

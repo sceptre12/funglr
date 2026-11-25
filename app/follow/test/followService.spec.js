@@ -51,16 +51,32 @@ describe('FollowService', function () {
 		expect(settle(FollowService.follow('u2')).err.code).toBe('exists');
 	});
 
-	it('follow with a blank followee rejects invalid', function () {
+	it('follow with a blank followee rejects invalid with its message', function () {
 		signIn('u1');
-		expect(settle(FollowService.follow(' ')).err.code).toBe('invalid');
+		var err = settle(FollowService.follow(' ')).err;
+		expect(err.code).toBe('invalid');
+		expect(err.message).toBe('Pick a user to follow.');
+		expect(settle(FollowService.follow(undefined)).err.code).toBe('invalid');
+		expect(settle(FollowService.follow(null)).err.code).toBe('invalid');
+		expect(settle(FollowService.unfollow(undefined)).err.code).toBe('invalid');
+		expect(settle(FollowService.unfollow(null)).err.code).toBe('invalid');
+	});
+
+	it('follow of oneself rejects invalid and stores nothing', function () {
+		signIn('u1');
+		var err = settle(FollowService.follow('u1')).err;
+		expect(err.code).toBe('invalid');
+		expect(err.message).toBe('You cannot follow yourself.');
+		expect(settle(FollowService.listFollowing('u1')).ok.length).toBe(0);
 	});
 
 	it('unfollow by another user rejects forbidden and keeps the follow', function () {
 		signIn('u1');
 		settle(FollowService.follow('u2'));
 		signIn('u3');
-		expect(settle(FollowService.unfollow('u1:u2')).err.code).toBe('forbidden');
+		var err = settle(FollowService.unfollow('u1:u2')).err;
+		expect(err.code).toBe('forbidden');
+		expect(err.message).toBe('Only the follower can unfollow.');
 		expect(settle(FollowService.listFollowing('u1')).ok.length).toBe(1);
 	});
 
@@ -76,7 +92,9 @@ describe('FollowService', function () {
 	it('unfollow of a missing follow rejects not-found; without a session unauthenticated; blank invalid', function () {
 		signIn('u1');
 		expect(settle(FollowService.unfollow('u9')).err.code).toBe('not-found');
-		expect(settle(FollowService.unfollow('')).err.code).toBe('invalid');
+		var blank = settle(FollowService.unfollow('')).err;
+		expect(blank.code).toBe('invalid');
+		expect(blank.message).toBe('Pick a follow to remove.');
 		settle(DataStore.remove('session', 'current'));
 		expect(settle(FollowService.unfollow('u2')).err.code).toBe('unauthenticated');
 	});
