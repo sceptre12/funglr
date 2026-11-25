@@ -1,5 +1,5 @@
 describe('commentsConfig and commentsCtrl', function () {
-	var states, $rootScope, $controller, DataStore, CommentService;
+	var states, $rootScope, $controller, DataStore, CommentService, PostService, $q;
 
 	beforeAll(function () {
 		return import('../../text-posts/js/text-postsModule.js')
@@ -23,7 +23,9 @@ describe('commentsConfig and commentsCtrl', function () {
 			});
 		});
 		angular.mock.module('funglr.comments');
-		angular.mock.inject(function (_$rootScope_, _$controller_, _DataStore_, _CommentService_) {
+		angular.mock.inject(function (_$rootScope_, _$controller_, _DataStore_, _CommentService_, _PostService_, _$q_) {
+			PostService = _PostService_;
+			$q = _$q_;
 			$rootScope = _$rootScope_;
 			$controller = _$controller_;
 			DataStore = _DataStore_;
@@ -51,6 +53,7 @@ describe('commentsConfig and commentsCtrl', function () {
 	}
 
 	it('registers the funglr.comments state', function () {
+		expect(states['funglr.comments'].url).toBe('/comments');
 		expect(states['funglr.comments'].controller).toBe('commentsCtrl');
 		expect(states['funglr.comments'].templateUrl).toBe('app/comments/views/comments.html');
 	});
@@ -104,5 +107,66 @@ describe('commentsConfig and commentsCtrl', function () {
 		settle(scope.remove(scope.posts[0], comment));
 		expect(scope.posts[0].comments.length).toBe(0);
 		expect(scope.error).toBe('');
+	});
+
+	it('starts with no posts, no error and no user before the load settles', function () {
+		var scope = $rootScope.$new();
+		$controller('commentsCtrl', { $scope: scope });
+		expect(scope.posts).toEqual([]);
+		expect(scope.error).toBe('');
+		expect(scope.currentUserId).toBe(null);
+	});
+
+	it('sets currentUserId to null when signed out', function () {
+		settle(DataStore.remove('session', 'current'));
+		var scope = $rootScope.$new();
+		scope.currentUserId = 'stale';
+		$controller('commentsCtrl', { $scope: scope });
+		$rootScope.$digest();
+		scope.currentUserId = 'x';
+		settle(scope.load());
+		expect(scope.currentUserId).toBe(null);
+	});
+
+	it('resets posts and reports an error when loading fails', function () {
+		var scope = start();
+		vi.spyOn(PostService, 'list').mockReturnValue($q.reject({ code: 'boom' }));
+		scope.posts = [{ id: 'stale' }];
+		settle(scope.load());
+		expect(scope.posts).toEqual([]);
+		expect(scope.error).toBe('Could not load posts');
+	});
+
+	it('shows the fallback message for an unknown or missing rejection', function () {
+		settle(DataStore.create('posts', { authorId: 'a', type: 'text', title: 't', body: 'b' }));
+		signIn('u1');
+		var scope = start();
+		var spy = vi.spyOn(CommentService, 'addComment');
+		spy.mockReturnValue($q.reject({ code: 'weird' }));
+		settle(scope.add(scope.posts[0]));
+		expect(scope.error).toBe('Could not update the comment');
+		scope.error = '';
+		spy.mockReturnValue($q.reject());
+		settle(scope.add(scope.posts[0]));
+		expect(scope.error).toBe('Could not update the comment');
+		scope.error = '';
+		spy.mockReturnValue($q.reject(null));
+		settle(scope.add(scope.posts[0]));
+		expect(scope.error).toBe('Could not update the comment');
+	});
+
+	it('clears the previous error before add and before remove', function () {
+		settle(DataStore.create('posts', { authorId: 'a', type: 'text', title: 't', body: 'b' }));
+		signIn('u1');
+		var scope = start();
+		scope.error = 'old';
+		scope.posts[0].newComment = 'fine';
+		var pending = scope.add(scope.posts[0]);
+		expect(scope.error).toBe('');
+		settle(pending);
+		scope.error = 'old';
+		var removing = scope.remove(scope.posts[0], scope.posts[0].comments[0]);
+		expect(scope.error).toBe('');
+		settle(removing);
 	});
 });

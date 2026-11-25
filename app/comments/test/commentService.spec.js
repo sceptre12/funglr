@@ -1,5 +1,5 @@
 describe('CommentService', function () {
-	var CommentService, DataStore, $rootScope;
+	var CommentService, DataStore, $rootScope, $q;
 
 	beforeAll(function () {
 		return import('../../text-posts/js/text-postsModule.js')
@@ -14,7 +14,8 @@ describe('CommentService', function () {
 	beforeEach(function () {
 		localStorage.clear();
 		angular.mock.module('funglr.comments');
-		angular.mock.inject(function (_CommentService_, _DataStore_, _$rootScope_) {
+		angular.mock.inject(function (_CommentService_, _DataStore_, _$rootScope_, _$q_) {
+			$q = _$q_;
 			CommentService = _CommentService_;
 			DataStore = _DataStore_;
 			$rootScope = _$rootScope_;
@@ -120,5 +121,35 @@ describe('CommentService', function () {
 		var list = settle(CommentService.getCommentsWithAuthors(p)).ok;
 		var names = list.map(function (c) { return c.authorName; }).sort();
 		expect(names).toEqual(['Ann', 'ghost']);
+	});
+
+	it('accepts a comment of exactly 1000 characters and rejects 1001 with the limit message', function () {
+		var p = makePost();
+		signIn('u1');
+		expect(settle(CommentService.addComment(p, new Array(1001).join('x'))).ok.body.length).toBe(1000);
+		expect(settle(CommentService.addComment(p, new Array(1000).join('x'))).ok.body.length).toBe(999);
+		var tooLong = settle(CommentService.addComment(p, new Array(1002).join('x'))).err;
+		expect(tooLong.code).toBe('invalid');
+		expect(tooLong.message).toBe('comment is at most 1000 characters');
+	});
+
+	it('does not mutate the stored comment objects when adding author names', function () {
+		var original = { id: 'c1', postId: 'p', authorId: 'ghost', body: 'boo' };
+		vi.spyOn(DataStore, 'list').mockReturnValue($q.when([original]));
+		var list = settle(CommentService.getCommentsWithAuthors('p')).ok;
+		expect(list[0].authorName).toBe('ghost');
+		expect(list[0]).not.toBe(original);
+		expect('authorName' in original).toBe(false);
+	});
+
+	it('keeps the add, list and remove aliases', function () {
+		expect(CommentService.add).toBe(CommentService.addComment);
+		expect(CommentService.list).toBe(CommentService.getComments);
+		expect(CommentService.remove).toBe(CommentService.removeComment);
+		var p = makePost();
+		signIn('u1');
+		var c = settle(CommentService.add(p, 'via alias')).ok;
+		expect(settle(CommentService.list(p)).ok.length).toBe(1);
+		expect(settle(CommentService.remove(c.id)).ok).toBe(true);
 	});
 });
