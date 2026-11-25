@@ -71,6 +71,35 @@ describe('imagePostCtrl', function () {
 		expect($scope.error).toBe('the image post could not be created');
 	});
 
+	it('busy is false initially', function () {
+		expect($scope.busy).toBe(false);
+	});
+
+	it('a second insertImage while the first is pending calls createImagePost once', function () {
+		var d = $q.defer();
+		service.createImagePost.mockReturnValue(d.promise);
+		$scope.insertImage();
+		expect($scope.busy).toBe(true);
+		$scope.insertImage();
+		expect(service.createImagePost).toHaveBeenCalledTimes(1);
+		d.resolve({ id: 1 });
+		$rootScope.$digest();
+		expect($scope.busy).toBe(false);
+		expect(modal.close).toHaveBeenCalledTimes(1);
+	});
+
+	it('busy resets after a rejection so a retry works', function () {
+		service.createImagePost.mockReturnValue($q.reject({ message: 'bad' }));
+		$scope.insertImage();
+		$rootScope.$digest();
+		expect($scope.busy).toBe(false);
+		service.createImagePost.mockReturnValue($q.when({ id: 1 }));
+		$scope.insertImage();
+		$rootScope.$digest();
+		expect(service.createImagePost).toHaveBeenCalledTimes(2);
+		expect(modal.close).toHaveBeenCalledTimes(1);
+	});
+
 	it('insertPost is an alias of insertImage', function () {
 		expect($scope.insertPost).toBe($scope.insertImage);
 	});

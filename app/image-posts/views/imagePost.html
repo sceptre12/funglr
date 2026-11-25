@@ -19,7 +19,7 @@
             <p class="text-danger" ng-if="error">{{error}}</p>
         </div>
         <div class="modal-footer">
-            <button type="submit" class="btn btn-success" ng-click="insertImage()" ng-disabled="imagepost.$invalid || !file">Submit</button>
+            <button type="submit" class="btn btn-success" ng-click="insertImage()" ng-disabled="imagepost.$invalid || !file || busy">Submit</button>
             <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
         </div>
     </form>
