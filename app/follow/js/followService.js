@@ -19,6 +19,9 @@
 					return $q.reject({ code: 'invalid', message: 'Pick a user to follow.' });
 				}
 				return session().then(function (current) {
+					if (String(followeeId) === current.userId) {
+						return $q.reject({ code: 'invalid', message: 'You cannot follow yourself.' });
+					}
 					return DataStore.create(COLLECTION, {
 						id: current.userId + ':' + followeeId,
 						followerId: current.userId,

@@ -33,6 +33,10 @@
 				return op.then(function () {
 					$scope.following[user.id] = !$scope.following[user.id];
 				}, function (rejection) {
+					if (rejection && rejection.code === 'exists') {
+						$scope.following[user.id] = true;
+						return;
+					}
 					$scope.error = message(rejection);
 				});
 			};
