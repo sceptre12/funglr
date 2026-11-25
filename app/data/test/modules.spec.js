@@ -4,7 +4,7 @@ describe('root module', function () {
 	beforeAll(function () {
 		return import('../../main/js/mainModule.js')
 			.then(function () { return import('../js/dataModule.js'); })
-			.then(function () { return import('../../auth/js/authConfig.js'); })
+			.then(function () { return import('../../auth/js/authModule.js'); })
 			.then(function () { return Promise.all(['text-posts', 'image-posts', 'audio-posts', 'comments', 'likes', 'follow', 'reblog', 'profile', 'dashboard', 'feed', 'activity', 'session'].map(function (f) { return import('../../' + f + '/js/' + f + 'Module.js'); })); });
 	});
 
