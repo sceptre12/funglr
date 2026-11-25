@@ -1,11 +1,13 @@
 # Funglr (Learning)
 
-A blog app that mimics Tumblr on a small scale. AngularJS 1.3, built with Node 22 (no Ruby, no gulp, no bower build step).
+A blog app that mimics Tumblr on a small scale. AngularJS 1.3, built with Node 22 (no Ruby, no gulp).
 
 ## Setup
 Node v22.13.0, then:
 
     npm ci
+
+`index.html` still references vendor files under `bower_components/`, which `npm ci` does not install; they are handled outside this setup.
 
 ## Scripts
 - `npm run build` bundles scripts (`app/**/js/**/*.js`), templates (`app/**/*.html`) and styles (`styles/sass/main.scss`) into `build/`
