@@ -12,13 +12,21 @@
 				reblogPost: function (postId) {
 					return currentUser().then(function (session) {
 						return DataStore.get('posts', postId).then(function (post) {
-							return DataStore.create('posts', {
-								authorId: session.userId,
-								type: post.type,
-								title: post.title,
-								body: post.body,
-								mediaData: post.mediaData,
-								reblogOf: postId
+							if (post.authorId === session.userId) {
+								return $q.reject({ code: 'forbidden', message: 'cannot reblog your own post' });
+							}
+							return DataStore.list('posts', { authorId: session.userId, reblogOf: postId }).then(function (existing) {
+								if (existing.length) {
+									return $q.reject({ code: 'exists', message: 'already reblogged' });
+								}
+								return DataStore.create('posts', {
+									authorId: session.userId,
+									type: post.type,
+									title: post.title,
+									body: post.body,
+									mediaData: post.mediaData,
+									reblogOf: postId
+								});
 							});
 						});
 					});
