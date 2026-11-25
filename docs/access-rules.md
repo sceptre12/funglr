@@ -4,7 +4,7 @@ The rules are defined in the last section of `contracts/data-layer.md@da2c0992e8
 
 ## Where a rule lives
 
-- Enforcement is in the feature service that owns the data, not in the store or the adapter. The store and adapter (`app/data/js/`) only store, find and reject on missing or duplicate records.
+- Enforcement is in the feature service that owns the data, not in the store or the adapter. The store and adapter (`app/data/js/`) store and find records and reject with the contract's error codes (for example not found, exists, invalid); they do not decide who may do what.
 - The error codes a rule uses are the ones listed in the contract's "Angular service" section: a missing session rejects as unauthenticated, a disallowed action as forbidden.
 
 ## How to read the rules section
@@ -20,7 +20,7 @@ The signed-in user comes from the session document (described in the contract's 
 ## Where to check the code
 
 - Removal checks: `app/text-posts/js/postService.js` and `app/comments/js/commentService.js`; likes, follows and reblogs remove only records built from the current session's user (see `app/likes/js/likeService.js`, `app/follow/js/followService.js`, `app/reblog/js/reblogService.js`).
-- Creation with the session as author: `app/image-posts/js/imagePostService.js` and `app/audio-posts/js/audioPostService.js` read the session first and reject as unauthenticated when none exists.
-- Session writes (login, logout): `app/auth/js/authService.js`.
+- Creation with the session as author: `app/image-posts/js/imagePostService.js` and `app/audio-posts/js/audioPostService.js` read the session through the store and reject as unauthenticated when none exists (the file checks in those services may reject as invalid before that).
+- Session removal on logout: `app/main/js/navController.js`. The contract names auth-signup-login as the writer of the session; check what `app/auth/js/authService.js` actually does before relying on it.
 
 When you add a feature that writes data, enforce the rules in your service, add tests next to it, and do not change the contract in the same unit.

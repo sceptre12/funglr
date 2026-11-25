@@ -4,10 +4,10 @@ The data model is defined in one place: `contracts/data-layer.md@da2c0992e815402
 
 ## How to read the contract
 
-1. Start with the front matter. It names the file's owner, the rows that consume it and a version. A change to the version means a change to the shape of the data.
+1. Start with the front matter. It names the file's owner, the rows that consume it and a version.
 2. Read the "Angular service" section for the shape of the data layer. It names the module, the one store factory that feature code calls and the adapter that sits behind it. The code is in `app/data/js/` (`dataModule.js`, `dataStore.js`, `localAdapter.js`).
 3. Read the store-methods table for what each call resolves with and which error codes it can reject with. The set of error codes is also declared in `app/data/js/dataStore.js`.
-4. Read the collections section for the list of collections and the fixed set of names each record carries. The contract is the only list; adding to a collection needs a new contract version. Look there, not here.
+4. Read the collections section for the list of collections and the fixed set of names each record carries. The contract is the only list, and it states that rows add no field without a new contract version. Look there, not here.
 5. Read the storage section for how the browser-local adapter lays records out in `localStorage` (implemented in `app/data/js/localAdapter.js`), and how secrets are treated.
 6. The last section, the access rules, is covered in `docs/access-rules.md`.
 
