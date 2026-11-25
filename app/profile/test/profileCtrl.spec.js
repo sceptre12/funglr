@@ -62,4 +62,61 @@ describe('profileCtrl', function () {
 		expect(scope.message).toBe('Sign in to see your profile.');
 		expect(scope.loaded).toBe(true);
 	});
+	it('keeps equal-createdAt posts in stored order and orders a mix newest first', function () {
+		seedUser();
+		['a', 'b', 'c', 'd'].forEach(function (id) {
+			DataStore.create('posts', { id: id, authorId: 'u1', type: 'text', title: id, body: id });
+		});
+		DataStore.update('posts', 'a', { createdAt: '2026-03-01T00:00:00.000Z' });
+		DataStore.update('posts', 'b', { createdAt: '2026-01-01T00:00:00.000Z' });
+		DataStore.update('posts', 'c', { createdAt: '2026-03-01T00:00:00.000Z' });
+		DataStore.update('posts', 'd', { createdAt: '2026-02-01T00:00:00.000Z' });
+		$rootScope.$digest();
+		run();
+		expect(scope.posts.map(function (p) { return p.id; })).toEqual(['a', 'c', 'd', 'b']);
+	});
+
+	it('keeps all-equal posts in stored order', function () {
+		seedUser();
+		['a', 'b', 'c'].forEach(function (id) {
+			DataStore.create('posts', { id: id, authorId: 'u1', type: 'text', title: id, body: id });
+			DataStore.update('posts', id, { createdAt: '2026-03-01T00:00:00.000Z' });
+		});
+		$rootScope.$digest();
+		run();
+		expect(scope.posts.map(function (p) { return p.id; })).toEqual(['a', 'b', 'c']);
+	});
+
+	it('rejects with the sign-in message and unauthenticated code from the service', function () {
+		var ProfileService, err;
+		angular.mock.inject(function (_ProfileService_) { ProfileService = _ProfileService_; });
+		ProfileService.getProfile().then(null, function (e) { err = e; });
+		$rootScope.$digest();
+		expect(err).toEqual({ code: 'unauthenticated', message: 'Sign in to see your profile.' });
+	});
+
+	it('shows the generic message when loading fails for another reason', function () {
+		var $q;
+		angular.mock.inject(function (_$q_) { $q = _$q_; });
+		$controller('profileCtrl', {
+			$scope: scope,
+			ProfileService: { getProfile: function () { return $q.reject({ code: 'boom' }); } }
+		});
+		$rootScope.$digest();
+		expect(scope.message).toBe('The profile could not be loaded.');
+		expect(scope.loaded).toBe(true);
+		expect(scope.user).toBe(null);
+		expect(scope.posts).toEqual([]);
+	});
+
+	it('shows the generic message when the rejection has no value', function () {
+		var $q;
+		angular.mock.inject(function (_$q_) { $q = _$q_; });
+		$controller('profileCtrl', {
+			$scope: scope,
+			ProfileService: { getProfile: function () { return $q.reject(); } }
+		});
+		$rootScope.$digest();
+		expect(scope.message).toBe('The profile could not be loaded.');
+	});
 });
