@@ -1,1 +1,10 @@
-items
+<div id="useritems">
+    <h5>Your posts</h5>
+    <p ng-if="uItem.loaded && !uItem.items.length">No posts yet.</p>
+    <ul class="list-unstyled">
+        <li ng-repeat="item in uItem.items">
+            <strong>{{item.title || '(untitled)'}}</strong>
+            <small>{{item.type}}</small>
+        </li>
+    </ul>
+</div>

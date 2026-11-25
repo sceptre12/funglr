@@ -1,16 +1,40 @@
 (function (window) {
 	var angular = window.angular;
 	angular.module('funglr.dashboard')
-		.controller('dashMainCtrl', ['$scope', 'DataStore', 'PostService', 'CommentService', 'LikeService', 'ReblogService',
-			function ($scope, DataStore, PostService, CommentService, LikeService, ReblogService) {
+		.controller('dashMainCtrl', ['$scope', '$sce', 'DataStore', 'PostService', 'CommentService', 'LikeService', 'ReblogService',
+			function ($scope, $sce, DataStore, PostService, CommentService, LikeService, ReblogService) {
 				var session = null;
 
+				function authorName(authorId, target, field) {
+					DataStore.get('users', authorId).then(function (user) { target[field] = user.name; });
+				}
+
+				function fillItem(item, post) {
+					// posts store their media as one data URL in mediaData (contracts/data-layer.md)
+					if (post.type === 'audio' && post.mediaData) {
+						item.audioSrc = $sce.trustAsResourceUrl(post.mediaData);
+					}
+					CommentService.getComments(post.id).then(function (comments) {
+						comments.forEach(function (comment) { authorName(comment.authorId, comment, 'authorName'); });
+						item.comments = comments;
+					});
+					LikeService.getLikes(post.id).then(function (likes) {
+						item.notes = likes.length;
+						item.like = !!session && likes.some(function (like) { return like.userId === session.userId; });
+					});
+					if (session) {
+						ReblogService.getReblogs(post.id).then(function (reblogs) {
+							item.reblog = reblogs.some(function (reblog) { return reblog.authorId === session.userId; });
+						});
+					}
+					authorName(post.authorId, item, 'owner');
+				}
+
 				function load() {
-					PostService.listPosts().then(function (posts) {
+					return PostService.listPosts().then(function (posts) {
 						$scope.postlist = posts.map(function (post) {
-							var item = { content: post, key: post.id, comments: [], owner: post.authorId };
-							CommentService.getComments(post.id).then(function (comments) { item.comments = comments; });
-							DataStore.get('users', post.authorId).then(function (user) { item.owner = user.name; });
+							var item = { content: post, key: post.id, comments: [], owner: post.authorId, notes: 0, like: false, reblog: false, busy: false };
+							fillItem(item, post);
 							return item;
 						});
 					});
@@ -24,19 +48,26 @@
 					return !!(session && found && found.content.authorId === session.userId);
 				};
 				$scope.subComments = function (key, response) {
-					CommentService.addComment(key, response).then(load);
+					return CommentService.addComment(key, response).then(load);
 				};
 				$scope.deleteComment = function (pkey, commentId) {
-					CommentService.removeComment(commentId).then(load);
+					return CommentService.removeComment(commentId).then(load);
 				};
 				$scope.deletePost = function (postkey) {
-					PostService.removePost(postkey).then(load);
+					return PostService.removePost(postkey).then(load);
 				};
-				$scope.liked = function (key, clicked) {
-					(clicked ? LikeService.unlikePost(key) : LikeService.likePost(key));
+				// like and reblog flags come from the stored records, so one click makes one write
+				$scope.liked = function (post) {
+					if (post.busy) { return; }
+					post.busy = true;
+					(post.like ? LikeService.unlikePost(post.key) : LikeService.likePost(post.key))
+						.then(load, function () { post.busy = false; });
 				};
-				$scope.reblogged = function (key, clicked) {
-					(clicked ? ReblogService.unReblog(key) : ReblogService.reblogPost(key)).then(load);
+				$scope.reblogged = function (post) {
+					if (post.busy) { return; }
+					post.busy = true;
+					(post.reblog ? ReblogService.unReblog(post.key) : ReblogService.reblogPost(post.key))
+						.then(load, function () { post.busy = false; });
 				};
 			}]);
 }(window));
