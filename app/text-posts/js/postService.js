@@ -16,9 +16,38 @@
 				});
 			}
 
-			return {
+			var MAX_BODY = 2000;
+
+			function invalid(message) {
+				return $q.reject({ code: 'invalid', message: message });
+			}
+
+			function blank(value) {
+				return typeof value !== 'string' || value.trim() === '';
+			}
+
+			function validate(post) {
+				if (!post || blank(post.title)) {
+					return 'title is required';
+				}
+				if (post.type === 'text') {
+					if (blank(post.body)) {
+						return 'body is required';
+					}
+					if (post.body.length > MAX_BODY) {
+						return 'body is at most ' + MAX_BODY + ' characters';
+					}
+				}
+				return null;
+			}
+
+			var service = {
 				createPost: function (post) {
 					return currentUser().then(function (session) {
+						var problem = validate(post);
+						if (problem) {
+							return invalid(problem);
+						}
 						return DataStore.create('posts', {
 							authorId: session.userId,
 							type: post.type,
@@ -28,6 +57,9 @@
 							reblogOf: post.reblogOf || null
 						});
 					});
+				},
+				getPost: function (postId) {
+					return DataStore.get('posts', postId);
 				},
 				listPosts: function (filter) {
 					return DataStore.list('posts', filter);
@@ -43,5 +75,11 @@
 					});
 				}
 			};
+
+			service.create = service.createPost;
+			service.get = service.getPost;
+			service.list = service.listPosts;
+			service.remove = service.removePost;
+			return service;
 		}]);
 }(window));
