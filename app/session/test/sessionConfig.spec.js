@@ -88,4 +88,57 @@ describe('sessionConfig route guard', function () {
 		expect(event.defaultPrevented).toBe(true);
 		expect(go).toHaveBeenCalledWith('funglr.profile', { id: 1 });
 	});
+
+	it('clears currentUser to an empty string when the restore fails with no stored session', function () {
+		boot();
+		$rootScope.$digest();
+		expect($rootScope.currentUser).toBe('');
+		navigate('funglr.profile');
+		expect(go).toHaveBeenCalledWith('funglr.login');
+	});
+
+	it('clears a stale currentUser when the restore fails', function () {
+		boot();
+		$rootScope.currentUser = { userId: 'stale' };
+		$rootScope.$digest();
+		expect($rootScope.currentUser).toBe('');
+		navigate('funglr.profile');
+		expect(go).toHaveBeenCalledWith('funglr.login');
+	});
+
+	it('keeps the stored session and treats the user as anonymous when the user lookup fails unexpectedly', function () {
+		seedStored(true);
+		go = vi.fn();
+		angular.mock.module('funglr.session');
+		angular.mock.module(function ($provide) {
+			$provide.value('$state', { go: go });
+			$provide.decorator('LocalAdapter', function ($delegate) {
+				var realGet = $delegate.get;
+				$delegate.get = function (collection, id) {
+					if (collection === 'users') {
+						var e = new Error('storage broke');
+						e.code = 'invalid';
+						throw e;
+					}
+					return realGet.apply($delegate, arguments);
+				};
+				return $delegate;
+			});
+		});
+		angular.mock.inject(function (_$rootScope_) { $rootScope = _$rootScope_; });
+		$rootScope.currentUser = { userId: 'stale' };
+		$rootScope.$digest();
+		expect(localStorage.getItem('funglr:session')).not.toBeNull();
+		expect($rootScope.currentUser).toBe('');
+		var event = navigate('funglr.profile');
+		expect(event.defaultPrevented).toBe(true);
+		expect(go).toHaveBeenCalledWith('funglr.login');
+		expect(go).not.toHaveBeenCalledWith('funglr.profile', expect.anything());
+	});
+
+	it('declares funglr.data and funglr.auth as module dependencies', function () {
+		var requires = angular.module('funglr.session').requires;
+		expect(requires).toContain('funglr.data');
+		expect(requires).toContain('funglr.auth');
+	});
 });
