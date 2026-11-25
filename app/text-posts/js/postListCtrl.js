@@ -15,6 +15,16 @@
 					$scope.error = 'Sign in to see your posts';
 				});
 			};
+
+			$scope.remove = function (post) {
+				$scope.error = '';
+				return PostService.remove(post.id).then(function () {
+					$scope.posts = $scope.posts.filter(function (p) { return p.id !== post.id; });
+				}, function (rejection) {
+					$scope.error = rejection && rejection.code === 'forbidden' ?
+						'You can only delete your own posts' : 'Could not delete the post';
+				});
+			};
 			$scope.load();
 		}]);
 }(window));
