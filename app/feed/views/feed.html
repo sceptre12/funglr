@@ -1,0 +1,10 @@
+<div class="feed">
+    <p class="text-danger" ng-if="error">{{error}}</p>
+    <p ng-if="loaded && !error && posts.length === 0">Nothing here yet. Follow people to see their posts.</p>
+    <ul>
+        <li ng-repeat="post in posts">
+            <h4>{{post.title}}</h4>
+            <p ng-if="post.body">{{post.body}}</p>
+        </li>
+    </ul>
+</div>
