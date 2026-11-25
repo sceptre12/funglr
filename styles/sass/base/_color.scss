@@ -1,1 +1,9 @@
-$footerBordercolor: #000;
+body {
+	background-color: $color-bg;
+	color: $color-text;
+}
+a {
+	color: $color-accent;
+	&:hover { color: darken($color-accent, 10%); }
+}
+.text-muted { color: $color-muted; }
