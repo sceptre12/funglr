@@ -210,19 +210,9 @@ describe('dashboard controllers (mutation kills)', function () {
 			expect(scope.postlist[0].comments[0].authorName).toBe('Bob');
 		});
 
-		it('has no like and zero notes when signed out, even with likes stored', function () {
-			var post = addPost('u2', 't', '2026-01-01T00:00:00.000Z');
-			DataStore.create('likes', { id: post.id + ':u2', postId: post.id, userId: 'u2' });
-			$rootScope.$digest();
-			make();
-			expect(scope.postlist[0].like).toBe(false);
-			expect(scope.postlist[0].notes).toBe(1);
-			expect(scope.postlist[0].reblog).toBe(false);
-		});
-
 		it('is not liked when the stored likes belong to other users', function () {
 			signIn('u1', 'Ann');
-			var post = addPost('u2', 't', '2026-01-01T00:00:00.000Z');
+			var post = addPost('u1', 't', '2026-01-01T00:00:00.000Z');
 			DataStore.create('likes', { id: post.id + ':u2', postId: post.id, userId: 'u2' });
 			$rootScope.$digest();
 			make();
@@ -232,7 +222,7 @@ describe('dashboard controllers (mutation kills)', function () {
 
 		it('is liked when one of several likes is the session user', function () {
 			signIn('u1', 'Ann');
-			var post = addPost('u2', 't', '2026-01-01T00:00:00.000Z');
+			var post = addPost('u1', 't', '2026-01-01T00:00:00.000Z');
 			DataStore.create('likes', { id: post.id + ':u2', postId: post.id, userId: 'u2' });
 			DataStore.create('likes', { id: post.id + ':u1', postId: post.id, userId: 'u1' });
 			$rootScope.$digest();
@@ -241,17 +231,52 @@ describe('dashboard controllers (mutation kills)', function () {
 			expect(itemFor(post).notes).toBe(2);
 		});
 
-		it('does not flag a reblog by another user, or any reblog when signed out', function () {
+		it('does not flag a reblog by another user', function () {
 			signIn('u1', 'Ann');
-			var post = addPost('u2', 't', '2026-01-01T00:00:00.000Z');
+			var post = addPost('u1', 't', '2026-01-01T00:00:00.000Z');
 			addPost('u3', 'rb', '2026-01-02T00:00:00.000Z', { reblogOf: post.id });
 			make();
 			expect(itemFor(post).reblog).toBe(false);
+		});
 
-			DataStore.remove('session', 'current');
-			$rootScope.$digest();
+		it('lists only the signed-in user own posts, newest first', function () {
+			signIn('u1', 'Ann');
+			var a = addPost('u1', 'a', '2026-01-01T00:00:00.000Z');
+			addPost('u2', 'other', '2026-01-02T00:00:00.000Z');
+			var c = addPost('u1', 'c', '2026-01-03T00:00:00.000Z');
+			var list = vi.spyOn(PostService, 'listPosts');
 			make();
-			expect(itemFor(post).reblog).toBe(false);
+			expect(list).toHaveBeenCalledWith({ authorId: 'u1' });
+			expect(scope.postlist.map(function (p) { return p.key; })).toEqual([c.id, a.id]);
+		});
+
+		it('keeps the later stored post first when createdAt is equal', function () {
+			signIn('u1', 'Ann');
+			var a = addPost('u1', 'a', '2026-01-01T00:00:00.000Z');
+			var b = addPost('u1', 'b', '2026-01-01T00:00:00.000Z');
+			make();
+			expect(scope.postlist.map(function (p) { return p.key; })).toEqual([b.id, a.id]);
+		});
+
+		it('shows an empty list and reads no posts when nobody is signed in', function () {
+			addPost('u2', 't', '2026-01-01T00:00:00.000Z');
+			var list = vi.spyOn(PostService, 'listPosts');
+			make();
+			expect(scope.postlist).toEqual([]);
+			expect(list).not.toHaveBeenCalled();
+		});
+
+		it('does not send an empty or whitespace-only comment', function () {
+			signIn('u1', 'Ann');
+			make();
+			var add = vi.spyOn(CommentService, 'addComment').mockReturnValue($q.when({}));
+			['', '   ', '\t\n', undefined, null].forEach(function (body) {
+				var done = false;
+				scope.subComments('post-1', body).then(function () { done = true; });
+				$rootScope.$digest();
+				expect(done).toBe(true);
+			});
+			expect(add).not.toHaveBeenCalled();
 		});
 
 		it('keeps the list item defaults while the lookups are pending', function () {

@@ -1,8 +1,8 @@
 (function (window) {
 	var angular = window.angular;
 	angular.module('funglr.dashboard')
-		.controller('dashMainCtrl', ['$scope', '$sce', 'DataStore', 'PostService', 'CommentService', 'LikeService', 'ReblogService',
-			function ($scope, $sce, DataStore, PostService, CommentService, LikeService, ReblogService) {
+		.controller('dashMainCtrl', ['$scope', '$sce', '$q', 'DataStore', 'PostService', 'CommentService', 'LikeService', 'ReblogService',
+			function ($scope, $sce, $q, DataStore, PostService, CommentService, LikeService, ReblogService) {
 				var session = null;
 
 				function authorName(authorId, target, field) {
@@ -30,9 +30,24 @@
 					authorName(post.authorId, item, 'owner');
 				}
 
+				// newest first; equal createdAt keeps the later stored record first (same rule as userItemCtrl)
+				function newestFirst(posts) {
+					return posts.map(function (post, index) { return { post: post, index: index }; })
+						.sort(function (a, b) {
+							if (a.post.createdAt === b.post.createdAt) { return b.index - a.index; }
+							return a.post.createdAt < b.post.createdAt ? 1 : -1;
+						})
+						.map(function (entry) { return entry.post; });
+				}
+
+				// the main pane lists the signed-in user's own posts; nobody signed in shows none
 				function load() {
-					return PostService.listPosts().then(function (posts) {
-						$scope.postlist = posts.map(function (post) {
+					if (!session) {
+						$scope.postlist = [];
+						return $q.when([]);
+					}
+					return PostService.listPosts({ authorId: session.userId }).then(function (posts) {
+						$scope.postlist = newestFirst(posts).map(function (post) {
 							var item = { content: post, key: post.id, comments: [], owner: post.authorId, notes: 0, like: false, reblog: false, busy: false };
 							fillItem(item, post);
 							return item;
@@ -48,6 +63,7 @@
 					return !!(session && found && found.content.authorId === session.userId);
 				};
 				$scope.subComments = function (key, response) {
+					if (typeof response !== 'string' || !response.trim()) { return $q.when(); }
 					return CommentService.addComment(key, response).then(load);
 				};
 				$scope.deleteComment = function (pkey, commentId) {

@@ -129,7 +129,7 @@ describe('dashboard', function () {
 
 		it('reads like and reblog flags from the stored records', function () {
 			signIn('u1', 'Ann');
-			var post = addPost('u2', 't', '2026-01-01T00:00:00.000Z');
+			var post = addPost('u1', 't', '2026-01-01T00:00:00.000Z');
 			DataStore.create('likes', { id: post.id + ':u1', postId: post.id, userId: 'u1' });
 			addPost('u1', 't', '2026-01-02T00:00:00.000Z', { reblogOf: post.id });
 			$rootScope.$digest();
@@ -142,7 +142,7 @@ describe('dashboard', function () {
 
 		it('reblogs a post once even when clicked twice before the write finishes', function () {
 			signIn('u1', 'Ann');
-			var post = addPost('u2', 't', '2026-01-01T00:00:00.000Z');
+			var post = addPost('u1', 't', '2026-01-01T00:00:00.000Z');
 			make();
 			scope.reblogged(scope.postlist[0]);
 			scope.reblogged(scope.postlist[0]);

@@ -61,7 +61,7 @@
                                 <form name="comments" class="form-inline" no-validate>
                                     <label>Comments</label>
                                     <div class="form-group">
-                                        <input type="text" name="comment" ng-model="item" placeholder="Write a reply..." />
+                                        <input type="text" name="comment" ng-model="item" placeholder="Write a reply..." required />
                                     </div>
 
                                     <button class="btn btn-default" type="submit" ng-disabled="comments.$invalid" ng-click="subComments(post.key,item)">Submit</button>
@@ -154,7 +154,7 @@
                                 <form name="comments" class="form-inline" no-validate>
                                     <label>Comments</label>
                                     <div class="form-group">
-                                        <input type="text" name="comment" ng-model="item" placeholder="Write a reply..." />
+                                        <input type="text" name="comment" ng-model="item" placeholder="Write a reply..." required />
                                     </div>
 
                                     <button class="btn btn-default" type="submit" ng-disabled="comments.$invalid" ng-click="subComments(post.key,item)">Submit</button>
@@ -247,7 +247,7 @@
                                 <form name="comments" class="form-inline" no-validate>
                                     <label>Comments</label>
                                     <div class="form-group">
-                                        <input type="text" name="comment" ng-model="item" placeholder="Write a reply..." />
+                                        <input type="text" name="comment" ng-model="item" placeholder="Write a reply..." required />
                                     </div>
 
                                     <button class="btn btn-default" type="submit" ng-disabled="comments.$invalid" ng-click="subComments(post.key,item)">Submit</button>

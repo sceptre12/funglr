@@ -136,6 +136,14 @@ describe('dashboard views (mutation kills)', function () {
 					expect(text(el)).toContain('7 notes');
 				});
 
+				it('requires comment text so the form is invalid while empty', function () {
+					var r = renderPost(type);
+					var input = r.el[0].querySelector('input[name="comment"]');
+					expect(input.hasAttribute('required')).toBe(true);
+					var submit = r.el[0].querySelector('button[type="submit"]');
+					expect(submit.disabled).toBe(true);
+				});
+
 				it('shows the author name or falls back to the author id', function () {
 					var t = text(renderPost(type).el);
 					expect(t).toContain('u7');
