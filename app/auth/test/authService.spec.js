@@ -127,5 +127,9 @@ describe('funglr.auth config', function () {
 		angular.mock.inject(function () {});
 		expect(states['funglr.signup'].url).toBe('/signup');
 		expect(states['funglr.login'].url).toBe('/login');
+		expect(states['funglr.signup'].templateUrl).toBe('app/auth/signup.html');
+		expect(states['funglr.signup'].controller).toBe('userSignUpCtrl as signUp');
+		expect(states['funglr.login'].templateUrl).toBe('app/auth/login.html');
+		expect(states['funglr.login'].controller).toBe('userLoginCtrl as login');
 	});
 });
