@@ -1,0 +1,10 @@
+<div class="follow-list">
+    <p class="text-danger" ng-if="error">{{error}}</p>
+    <p ng-if="!error && users.length === 0">No other users yet.</p>
+    <ul>
+        <li ng-repeat="user in users">
+            <span>{{user.name}}</span>
+            <button type="button" class="btn btn-default" ng-click="toggle(user)">{{following[user.id] ? 'Unfollow' : 'Follow'}}</button>
+        </li>
+    </ul>
+</div>
