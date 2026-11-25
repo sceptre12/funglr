@@ -1,0 +1,9 @@
+<div class="post-list">
+    <p class="text-danger" ng-if="error">{{error}}</p>
+    <p ng-if="!error && posts.length === 0">No text posts yet.</p>
+    <article ng-repeat="post in posts">
+        <h3>{{post.title}}</h3>
+        <p>{{post.body}}</p>
+        <button type="button" class="btn btn-link" ng-click="remove(post)">Delete</button>
+    </article>
+</div>
