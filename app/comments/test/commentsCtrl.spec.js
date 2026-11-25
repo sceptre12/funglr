@@ -166,6 +166,22 @@ describe('commentsConfig and commentsCtrl', function () {
 		expect(scope.error).toBe('Could not update the comment');
 	});
 
+	it('keeps a typed draft when a comment is removed, and clears it after a successful add', function () {
+		settle(DataStore.create('posts', { authorId: 'a', type: 'text', title: 't', body: 'b' }));
+		signIn('u1');
+		var scope = start();
+		scope.posts[0].newComment = 'first';
+		settle(scope.add(scope.posts[0]));
+		expect(scope.posts[0].newComment).toBe('');
+		scope.posts[0].newComment = 'half typed';
+		settle(scope.remove(scope.posts[0], scope.posts[0].comments[0]));
+		expect(scope.posts[0].comments.length).toBe(0);
+		expect(scope.posts[0].newComment).toBe('half typed');
+		settle(scope.add(scope.posts[0]));
+		expect(scope.posts[0].comments.length).toBe(1);
+		expect(scope.posts[0].newComment).toBe('');
+	});
+
 	it('clears the previous error before add and before remove', function () {
 		settle(DataStore.create('posts', { authorId: 'a', type: 'text', title: 't', body: 'b' }));
 		signIn('u1');

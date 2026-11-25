@@ -9,7 +9,7 @@
 			function decorate(post) {
 				return CommentService.getCommentsWithAuthors(post.id).then(function (comments) {
 					post.comments = comments;
-					post.newComment = '';
+					if (typeof post.newComment !== 'string') { post.newComment = ''; }
 				});
 			}
 
@@ -47,6 +47,7 @@
 			$scope.add = function (post) {
 				$scope.error = '';
 				return CommentService.addComment(post.id, post.newComment).then(function () {
+					post.newComment = '';
 					return decorate(post);
 				}, function (rejection) {
 					$scope.error = message(rejection);
