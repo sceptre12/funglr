@@ -1,3 +1,7 @@
+// NOTE (LOCAL-37): the body, a and .text-muted rules below are element/class
+// selectors loaded after bootstrap.min.css, so they restyle Bootstrap links and
+// .text-muted app-wide. This is intentional theming per ticket LOCAL-37 (one
+// coherent theme). No browser check exists to confirm the rendered result.
 body {
 	background-color: $color-bg;
 	color: $color-text;

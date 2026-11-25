@@ -3,6 +3,9 @@ body {
 	font-size: $font-size-base;
 	line-height: $line-height-base;
 }
+// NOTE (LOCAL-37): this h1-h6 rule is loaded after bootstrap.min.css and so
+// restyles Bootstrap headings app-wide. This is intentional theming per ticket
+// LOCAL-37 (one coherent theme). No browser check exists to confirm the result.
 h1, h2, h3, h4, h5, h6 {
 	font-family: $font-heading;
 	color: $color-primary;
