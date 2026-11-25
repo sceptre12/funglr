@@ -1,0 +1,7 @@
+<div class="activity-list">
+    <p class="text-danger" ng-if="error">{{error}}</p>
+    <p class="activity-empty" ng-if="!error && activity.length === 0">{{emptyMessage}}</p>
+    <article ng-repeat="item in activity">
+        <p><strong>{{item.userId}}</strong> liked "{{item.post.title}}"</p>
+    </article>
+</div>
