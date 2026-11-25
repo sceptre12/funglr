@@ -5,7 +5,7 @@ The rules are defined in the last section of `contracts/data-layer.md@da2c0992e8
 ## Where a rule lives
 
 - Enforcement is in the feature service that owns the data, not in the store or the adapter. The store and adapter (`app/data/js/`) store and find records and reject with the contract's error codes (for example not found, exists, invalid); they do not decide who may do what.
-- The error codes a rule uses are the ones listed in the contract's "Angular service" section: a missing session rejects as unauthenticated, a disallowed action as forbidden.
+- The error codes are listed in the contract's "Angular service" section; which code a missing session or a disallowed action gets is stated in its access-rules section (unauthenticated and forbidden).
 
 ## How to read the rules section
 

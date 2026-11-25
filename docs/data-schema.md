@@ -4,7 +4,7 @@ The data model is defined in one place: `contracts/data-layer.md@da2c0992e815402
 
 ## How to read the contract
 
-1. Start with the front matter. It names the file's owner, the rows that consume it and a version.
+1. Start with the plain lines at the top of the file. They give the file's owner, the rows that consume it and a version.
 2. Read the "Angular service" section for the shape of the data layer. It names the module, the one store factory that feature code calls and the adapter that sits behind it. The code is in `app/data/js/` (`dataModule.js`, `dataStore.js`, `localAdapter.js`).
 3. Read the store-methods table for what each call resolves with and which error codes it can reject with. The set of error codes is also declared in `app/data/js/dataStore.js`.
 4. Read the collections section for the list of collections and the fixed set of names each record carries. The contract is the only list, and it states that rows add no field without a new contract version. Look there, not here.
@@ -13,7 +13,7 @@ The data model is defined in one place: `contracts/data-layer.md@da2c0992e815402
 
 ## Where the data is used
 
-Feature rows read and write records through the store only. Their services live under `app/<feature>/js/`; for the post kinds see `app/text-posts/`, `app/image-posts/` and `app/audio-posts/`. The module naming that these folders follow is in `contracts/module-layout.md@3a30feffac373126e59007c579789466d3832d73`; how the app is built and served is in `contracts/build-and-serve.md@7806e944efb77dba79f6a560e0d17ea63b7472f2`.
+The data-layer feature services (posts, comments, likes, follows, reblogs, the session handling in the main navigation) read and write records through the store. The auth service (`app/auth/js/authService.js`) has not moved to the store yet: it still calls Firebase directly, so do not assume every feature goes through the store (see `docs/access-rules.md`). Their services live under `app/<feature>/js/`; for the post kinds see `app/text-posts/`, `app/image-posts/` and `app/audio-posts/`. The module naming that these folders follow is in `contracts/module-layout.md@3a30feffac373126e59007c579789466d3832d73`; how the app is built and served is in `contracts/build-and-serve.md@7806e944efb77dba79f6a560e0d17ea63b7472f2`.
 
 The posts collection holds all three post kinds in one place; the contract states how the kinds differ. The image and audio services also enforce upload size limits that the contract does not mention; read them in `app/image-posts/js/imagePostService.js` and `app/audio-posts/js/audioPostService.js`.
 
