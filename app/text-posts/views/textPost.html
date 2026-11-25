@@ -16,9 +16,10 @@
             </div>
         </div>
         <textarea class="form-control" rows="3" placeholder="Body" ng-model="post.body" required></textarea>
+        <p class="text-danger" ng-if="error">{{error}}</p>
     </div>
     <div class="modal-footer">
-        <button type="submit" class="btn btn-success" ng-click="insertPost()" ng-disabled="textpost.$invalid">Submit</button>
+        <button type="submit" class="btn btn-success" ng-click="insertPost()">Submit</button>
         <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>
 </form>
