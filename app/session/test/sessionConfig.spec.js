@@ -72,13 +72,40 @@ describe('sessionConfig route guard', function () {
 		expect(go).toHaveBeenCalledWith('funglr.login');
 	});
 
-	it('restores a session whose user exists and lets guarded states through', function () {
+	it('restores a session whose user exists and replays a guarded navigation once', function () {
 		seedStored(true);
 		boot();
 		$rootScope.$digest();
 		expect($rootScope.currentUser.userId).toBe('u1');
+		expect(navigate('funglr.profile').defaultPrevented).toBe(true);
+		expect(go).toHaveBeenCalledTimes(1);
+		expect(go).toHaveBeenCalledWith('funglr.profile', { id: 1 });
 		expect(navigate('funglr.profile').defaultPrevented).toBe(false);
-		expect(go).not.toHaveBeenCalled();
+		expect(go).toHaveBeenCalledTimes(1);
+	});
+
+	it('redirects to login after the stored session is removed even though currentUser is still set', function () {
+		seedStored(true);
+		boot();
+		$rootScope.$digest();
+		expect($rootScope.currentUser).toBeTruthy();
+		localStorage.removeItem('funglr:session');
+		var event = navigate('funglr.profile');
+		expect(event.defaultPrevented).toBe(true);
+		expect(go).toHaveBeenCalledTimes(1);
+		expect(go).toHaveBeenCalledWith('funglr.login');
+		expect($rootScope.currentUser).toBe('');
+	});
+
+	it('redirects to login once after AuthFactory.logOut without looping', function () {
+		seedStored(true);
+		boot();
+		angular.mock.inject(function (AuthFactory) { AuthFactory.logOut(); });
+		$rootScope.$digest();
+		var event = navigate('funglr.profile');
+		expect(event.defaultPrevented).toBe(true);
+		expect(go).toHaveBeenCalledTimes(1);
+		expect(go).toHaveBeenCalledWith('funglr.login');
 	});
 
 	it('resumes the requested state after restore when a navigation races the restore', function () {
