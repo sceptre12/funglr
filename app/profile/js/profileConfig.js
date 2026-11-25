@@ -3,6 +3,11 @@
 	angular.module('funglr.profile')
 		.config(['$stateProvider', function ($stateProvider) {
 			$stateProvider
+				.state('funglr.profile', {
+					url: '/profile',
+					templateUrl: 'app/profile/views/profile.html',
+					controller: 'profileCtrl as profile'
+				})
 				.state('funglr.user', {
 					abstract: true,
 					url: '/user',
