@@ -142,16 +142,19 @@ describe('dashboard', function () {
 
 		it('reblogs a post once even when clicked twice before the write finishes', function () {
 			signIn('u1', 'Ann');
-			var post = addPost('u1', 't', '2026-01-01T00:00:00.000Z');
+			var post = addPost('u2', 't', '2026-01-01T00:00:00.000Z');
 			make();
-			scope.reblogged(scope.postlist[0]);
-			scope.reblogged(scope.postlist[0]);
+			var item = { key: post.id, busy: false, reblog: false };
+			scope.reblogged(item);
+			scope.reblogged(item);
 			$rootScope.$digest();
 			var reblogs = [];
 			DataStore.list('posts', { reblogOf: post.id }).then(function (l) { reblogs = l; });
 			$rootScope.$digest();
 			expect(reblogs.length).toBe(1);
-			expect(scope.postlist.filter(function (p) { return p.key === post.id; })[0].reblog).toBe(true);
+			expect(reblogs[0].authorId).toBe('u1');
+			expect(scope.postlist.length).toBe(1);
+			expect(scope.postlist[0].content.reblogOf).toBe(post.id);
 		});
 
 		it('only the author sees the delete button state', function () {
