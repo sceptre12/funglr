@@ -137,6 +137,17 @@ describe('commentsConfig and commentsCtrl', function () {
 		expect(scope.error).toBe('Could not load posts');
 	});
 
+	it('resets posts and reports an error when decorating comments fails', function () {
+		settle(DataStore.create('posts', { authorId: 'a', type: 'text', title: 't', body: 'b' }));
+		var scope = start();
+		vi.spyOn(CommentService, 'getCommentsWithAuthors').mockReturnValue($q.reject({ code: 'boom' }));
+		scope.posts = [{ id: 'stale' }];
+		scope.error = '';
+		settle(scope.load());
+		expect(scope.posts).toEqual([]);
+		expect(scope.error).toBe('Could not load posts');
+	});
+
 	it('shows the fallback message for an unknown or missing rejection', function () {
 		settle(DataStore.create('posts', { authorId: 'a', type: 'text', title: 't', body: 'b' }));
 		signIn('u1');

@@ -11,7 +11,7 @@
 			}
 
 			function validate(body) {
-				if (typeof body !== 'string' || body.trim() === '') {
+				if (typeof body !== 'string' || body === '') {
 					return 'comment text is required';
 				}
 				if (body.length > MAX_BODY) {
@@ -21,16 +21,17 @@
 			}
 
 			function addComment(postId, body) {
-				var problem = validate(body);
-				if (problem) {
-					return $q.reject({ code: 'invalid', message: problem });
-				}
 				return currentUser().then(function (session) {
+					var trimmed = typeof body === 'string' ? body.trim() : body;
+					var problem = validate(trimmed);
+					if (problem) {
+						return $q.reject({ code: 'invalid', message: problem });
+					}
 					return PostService.get(postId).then(function () {
 						return DataStore.create('comments', {
 							postId: postId,
 							authorId: session.userId,
-							body: body.trim()
+							body: trimmed
 						});
 					});
 				});

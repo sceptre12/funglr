@@ -56,6 +56,22 @@ describe('CommentService', function () {
 		expect(settle(CommentService.getComments(p)).ok.length).toBe(0);
 	});
 
+	it('rejects unauthenticated before invalid for a blank body when signed out', function () {
+		var p = makePost();
+		expect(settle(CommentService.addComment(p, '')).err.code).toBe('unauthenticated');
+		expect(settle(CommentService.addComment(p, '   ')).err.code).toBe('unauthenticated');
+		expect(settle(CommentService.addComment(p)).err.code).toBe('unauthenticated');
+	});
+
+	it('validates the trimmed body against the limit', function () {
+		var p = makePost();
+		signIn('u1');
+		var padded = '  ' + new Array(1001).join('x') + '  ';
+		expect(settle(CommentService.addComment(p, padded)).ok.body.length).toBe(1000);
+		var tooLong = settle(CommentService.addComment(p, '  ' + new Array(1002).join('x') + '  ')).err;
+		expect(tooLong.code).toBe('invalid');
+	});
+
 	it('rejects an over-long comment as invalid', function () {
 		var p = makePost();
 		signIn('u1');

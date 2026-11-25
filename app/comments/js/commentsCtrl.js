@@ -24,7 +24,7 @@
 					return decorateAll(posts).then(function () {
 						$scope.posts = posts;
 					});
-				}, function () {
+				}).then(null, function () {
 					$scope.posts = [];
 					$scope.error = 'Could not load posts';
 				});
