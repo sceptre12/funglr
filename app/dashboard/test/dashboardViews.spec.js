@@ -126,7 +126,7 @@ describe('dashboard views (mutation kills)', function () {
 			scope.isCurrentUser = vi.fn(function () { return true; });
 			scope.postlist = [Object.assign({
 				key: 'pk1',
-				content: { type: type, title: 'The Title', subject: 'The Subject', body: 'The Body', mediaData: 'data:image/png;base64,MEDIA' },
+				content: { type: type, title: 'The Title', body: 'The Body', mediaData: 'data:image/png;base64,MEDIA' },
 				audioSrc: $sce.trustAsResourceUrl('data:audio/mpeg;base64,AUDIO'),
 				comments: [
 					{ id: 'c0', authorId: 'u7', body: 'body-zero' },
@@ -232,11 +232,10 @@ describe('dashboard views (mutation kills)', function () {
 			});
 		});
 
-		it('audio block shows the audio element, the subject and no other block media', function () {
+		it('audio block shows the audio element and no other block media', function () {
 			var el = renderPost('audio').el;
 			var audio = el[0].querySelector('.audioblock audio');
 			expect(audio.getAttribute('src')).toBe('data:audio/mpeg;base64,AUDIO');
-			expect(text(el)).toContain('The Subject');
 			expect(el[0].querySelectorAll('audio').length).toBe(1);
 			expect(el[0].querySelectorAll('img').length).toBe(0);
 		});
@@ -247,9 +246,9 @@ describe('dashboard views (mutation kills)', function () {
 			expect(el[0].querySelectorAll('audio').length).toBe(0);
 		});
 
-		it('text block shows subject and body', function () {
+		it('text block shows title and body', function () {
 			var t = text(renderPost('text').el);
-			expect(t).toContain('The Subject');
+			expect(t).toContain('The Title');
 			expect(t).toContain('The Body');
 		});
 	});

@@ -8,7 +8,6 @@
                     <button class="btn glyphicon glyphicon-remove" ng-click="deletePost(post.key)" ng-show="isCurrentUser(post.key)"></button>
                     <h1>{{post.content.title}}</h1>
                     <hr>
-                    <h5>{{post.content.subject}}</h5>
                 </div>
                 <div class="panel-body">
                     <p>{{post.content.body}}</p>
@@ -104,7 +103,6 @@
                 <div class="panel-body">
                     <audio controls ng-src="{{post.audioSrc}}"></audio>
                     <hr>
-                    <h5>{{post.content.subject}}</h5>
                 </div>
                 <div class="panel-footer">
                     <div class="comments">
@@ -197,7 +195,6 @@
                 <div class="panel-body">
                     <img ng-src="{{post.content.mediaData}}" class="img-responsive"></img>
                     <hr>
-                    <h5>{{post.content.subject}}</h5>
                 </div>
                 <div class="panel-footer">
                     <div class="comments">
