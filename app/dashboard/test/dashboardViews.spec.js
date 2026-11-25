@@ -88,6 +88,31 @@ describe('dashboard views (mutation kills)', function () {
 		});
 	});
 
+	describe('userdashmain.html empty state', function () {
+		it('shows the empty-state line only once loaded with no posts', function () {
+			function p(scope) { return render('userdashmain.html', scope).find('p'); }
+			var a = $rootScope.$new(); a.loaded = true; a.postlist = [];
+			expect(p(a).text()).toBe('No posts yet.');
+			var b = $rootScope.$new(); b.loaded = false; b.postlist = [];
+			expect(p(b).length).toBe(0);
+			var c = $rootScope.$new(); c.loaded = true; c.postlist = [{ key: 'k', content: { type: 'text' }, comments: [] }];
+			expect(text(render('userdashmain.html', c))).not.toContain('No posts yet.');
+		});
+
+		it('shows the empty-state line when signed out, after the controller loads', function () {
+			angular.mock.inject(function ($controller) {
+				var scope = $rootScope.$new();
+				$controller('dashMainCtrl', { $scope: scope });
+				expect(scope.loaded).toBe(false);
+				var el = $compile('<div>' + html['userdashmain.html'] + '</div>')(scope);
+				expect(el.text()).not.toContain('No posts yet.');
+				$rootScope.$digest();
+				expect(scope.loaded).toBe(true);
+				expect(text(el)).toContain('No posts yet.');
+			});
+		});
+	});
+
 	describe('userdashmain.html', function () {
 		var BLOCKS = { text: 'textblock', audio: 'audioblock', image: 'imageblock' };
 

@@ -1,3 +1,4 @@
+<p ng-if="loaded && !postlist.length">No posts yet.</p>
 <ul id="usrdash">
     <li ng-repeat="post in postlist" >
         <div class="textblock" ng-if="post.content.type === 'text'">

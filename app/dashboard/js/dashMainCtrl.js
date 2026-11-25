@@ -4,6 +4,8 @@
 		.controller('dashMainCtrl', ['$scope', '$sce', '$q', 'DataStore', 'PostService', 'CommentService', 'LikeService', 'ReblogService',
 			function ($scope, $sce, $q, DataStore, PostService, CommentService, LikeService, ReblogService) {
 				var session = null;
+				// false until the first load finishes, so the empty-state line does not flash
+				$scope.loaded = false;
 
 				function authorName(authorId, target, field) {
 					DataStore.get('users', authorId).then(function (user) { target[field] = user.name; });
@@ -44,6 +46,7 @@
 				function load() {
 					if (!session) {
 						$scope.postlist = [];
+						$scope.loaded = true;
 						return $q.when([]);
 					}
 					return PostService.listPosts({ authorId: session.userId }).then(function (posts) {
@@ -52,6 +55,7 @@
 							fillItem(item, post);
 							return item;
 						});
+						$scope.loaded = true;
 					});
 				}
 
