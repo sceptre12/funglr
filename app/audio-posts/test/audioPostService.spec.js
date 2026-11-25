@@ -1,8 +1,12 @@
 describe('AudioPostService', function () {
-	var Service, DataStore, $rootScope, readResult;
+	var Service, DataStore, $rootScope, readResult, readFails;
 
 	function FakeReader() {}
 	FakeReader.prototype.readAsDataURL = function () {
+		if (readFails) {
+			this.onerror();
+			return;
+		}
 		this.result = readResult;
 		this.onload();
 	};
@@ -19,6 +23,7 @@ describe('AudioPostService', function () {
 	beforeEach(function () {
 		localStorage.clear();
 		readResult = 'data:audio/mpeg;base64,AAAA';
+		readFails = false;
 		angular.mock.module('funglr.audio-posts', function ($provide) {
 			$provide.value('$window', { FileReader: FakeReader });
 		});
@@ -75,6 +80,78 @@ describe('AudioPostService', function () {
 		expect(r.ok.title).toBe('song');
 		expect(r.ok.mediaData.indexOf('data:audio/')).toBe(0);
 		expect(settle(DataStore.list('posts', { type: 'audio' })).ok.length).toBe(1);
+	});
+
+	it('uses the documented messages for invalid type, size and sign-in', function () {
+		signIn();
+		expect(settle(Service.createAudioPost({ type: 'image/png', size: 10 }, 't')).err.message).toBe('Choose an audio file.');
+		expect(settle(Service.createAudioPost({ type: 'audio/mpeg', size: 1048577 }, 't')).err.message).toBe('The audio file must be 1 MB or smaller.');
+		readResult = 'data:image/png;base64,AAAA';
+		expect(settle(Service.createAudioPost({ type: 'audio/mpeg', size: 10 }, 't')).err.message).toBe('Choose an audio file.');
+	});
+
+	it('rejects unauthenticated with the sign-in message', function () {
+		var r = settle(Service.createAudioPost({ type: 'audio/mpeg', size: 10 }, 't'));
+		expect(r.err.message).toBe('Sign in to post.');
+	});
+
+	it('rejects a null or missing file as invalid without throwing', function () {
+		signIn();
+		expect(settle(Service.createAudioPost(null, 't')).err.code).toBe('invalid');
+		expect(settle(Service.createAudioPost(undefined, 't')).err.code).toBe('invalid');
+	});
+
+	it('rejects a file without a string type as invalid', function () {
+		signIn();
+		expect(settle(Service.createAudioPost({ size: 10 }, 't')).err.code).toBe('invalid');
+		expect(settle(Service.createAudioPost({ type: 5, size: 10 }, 't')).err.code).toBe('invalid');
+		expect(settle(DataStore.list('posts')).ok.length).toBe(0);
+	});
+
+	it('rejects with invalid and a read message when the FileReader fails', function () {
+		signIn();
+		readFails = true;
+		var r = settle(Service.createAudioPost({ type: 'audio/mpeg', size: 10 }, 't'));
+		expect(r.err.code).toBe('invalid');
+		expect(r.err.message).toBe('The file could not be read.');
+		expect(settle(DataStore.list('posts')).ok.length).toBe(0);
+	});
+
+	it('saves defaults: empty title and body, null reblogOf', function () {
+		signIn();
+		var r = settle(Service.createAudioPost({ type: 'audio/mpeg', size: 10 }));
+		expect(r.ok.title).toBe('');
+		expect(r.ok.body).toBe('');
+		expect(r.ok.reblogOf).toBe(null);
+	});
+
+	it('passes a non not-found session error through unchanged', function () {
+		var boom = { code: 'storage', message: 'boom' };
+		var d;
+		angular.mock.inject(function ($q) { d = $q.reject(boom); });
+		vi.spyOn(DataStore, 'get').mockReturnValue(d);
+		expect(settle(Service.createAudioPost({ type: 'audio/mpeg', size: 10 }, 't')).err).toBe(boom);
+	});
+
+	it('passes a falsy session error through as a rejection', function () {
+		var d;
+		angular.mock.inject(function ($q) { d = $q.reject(undefined); });
+		vi.spyOn(DataStore, 'get').mockReturnValue(d);
+		var r = settle(Service.createAudioPost({ type: 'audio/mpeg', size: 10 }, 't'));
+		expect(r.err).toBeUndefined();
+		expect(r.ok).toBeUndefined();
+	});
+
+	it('rejects as invalid when the read result is not a string', function () {
+		signIn();
+		readResult = null;
+		var r = settle(Service.createAudioPost({ type: 'audio/mpeg', size: 10 }, 't'));
+		expect(r.err.code).toBe('invalid');
+		expect(settle(DataStore.list('posts')).ok.length).toBe(0);
+	});
+
+	it('exports maxBytes as 1048576', function () {
+		expect(Service.maxBytes).toBe(1048576);
 	});
 
 	it('controller surfaces the error message and closes on success', function () {
