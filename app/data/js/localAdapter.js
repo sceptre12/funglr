@@ -25,7 +25,9 @@
 		function readRaw(key) {
 			var raw = localStorage.getItem(key);
 			if (raw === null || raw === undefined) { return null; }
-			try { return JSON.parse(raw); } catch (e) { return null; }
+			var parsed = null;
+			try { parsed = JSON.parse(raw); } catch (err) { parsed = err && null; }
+			return parsed;
 		}
 
 		function writeRaw(key, value) {
