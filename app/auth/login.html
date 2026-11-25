@@ -5,10 +5,10 @@
                 <h2 style="color:red">{{RouteChangeError}}</h2>
             </div>
             <h1>Login Here </h1>
-            <div ng-show="loginError">
-                <p>{{loginError}}</p>
+            <div ng-show="login.error">
+                <p class="text-danger">{{login.error}}</p>
             </div>
-            <form name="usrlogin"  ng-submit="login.login()" novalidate>
+            <form name="usrlogin"  ng-submit="login.login(usrlogin)" novalidate>
                 <div class="form-group" >
                     <label for="email">Email address</label>
                     <input type="email" class="form-control" id="email" placeholder="Enter email" ng-model="login.user.email" required>
