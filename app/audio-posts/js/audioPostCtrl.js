@@ -1,21 +1,24 @@
 (function (window) {
 	var angular = window.angular;
 	angular.module('funglr.audio-posts')
-		.controller('audioPostCtrl', ['$scope', 'PostService', '$modalInstance', 'clicked', function ($scope, PostService, $modalInstance, clicked) {
+		.controller('audioPostCtrl', ['$scope', 'AudioPostService', '$modalInstance', 'clicked', function ($scope, AudioPostService, $modalInstance, clicked) {
 			$scope.typeOfPost = clicked;
-			$scope.post = {
-				'type': 'audio',
-				'title': '',
-				'subject': '',
-				'body': '',
-				'image': {},
-				'audio': ''
+			$scope.post = { title: '' };
+			$scope.file = null;
+			$scope.error = '';
+
+			$scope.setFile = function (file) {
+				$scope.file = file || null;
 			};
 
 			$scope.insertPost = function () {
-				PostService.createPost($scope.post).then(function () { $modalInstance.close(); });
+				$scope.error = '';
+				return AudioPostService.createAudioPost($scope.file, $scope.post.title).then(function () {
+					$modalInstance.close();
+				}, function (err) {
+					$scope.error = err && err.message ? err.message : 'The post could not be created.';
+				});
 			};
-			$scope.insertImage = $scope.insertPost;
 			$scope.cancel = function () {
 				$modalInstance.dismiss('cancel');
 			};
